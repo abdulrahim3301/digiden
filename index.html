@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DigiDen — Digital Growth Studio</title>
+<meta name="description" content="DigiDen is a digital growth studio: brand, web, performance marketing and AI, built as one system.">
+<link rel="icon" type="image/svg+xml" href="assets/pieces/icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Custom cursor dot (desktop only, decorative) -->
+<div class="cursor-dot" aria-hidden="true"></div>
+
+<!-- The traveling hex mark -->
+<div class="hex-traveler" id="hexTraveler" aria-hidden="true">
+  <img src="assets/pieces/icon.svg" alt="">
+</div>
+
+<!-- Brand assembly: icon zooms out to center, DIGI / DEN letterforms slide in
+     from the edges. Deliberately kept OUTSIDE .hero: GSAP's ScrollTrigger pin
+     applies a transform to .hero while pinned, and any transform on an
+     ancestor creates a new containing block for position:fixed descendants —
+     which would break this from bleeding to the true viewport edges. -->
+<div class="brand-assemble" id="brandAssemble" aria-hidden="true">
+  <p class="lockup-caption lockup-caption-top">With assistance of</p>
+  <div class="logo-lockup" id="logoLockup">
+    <div class="lockup-left" id="lockupLeft">
+      <img class="pc pc-D" src="assets/pieces/D.svg" alt="">
+      <img class="pc pc-I" src="assets/pieces/I.svg" alt="">
+      <img class="pc pc-G" src="assets/pieces/G.svg" alt="">
+      <img class="pc pc-I2" src="assets/pieces/I2.svg" alt="">
+    </div>
+    <div class="lockup-icon" id="lockupIcon">
+      <img src="assets/pieces/icon.svg" alt="">
+    </div>
+    <div class="lockup-right" id="lockupRight">
+      <img class="pc pc-D2" src="assets/pieces/D2.svg" alt="">
+      <img class="pc pc-E" src="assets/pieces/E.svg" alt="">
+      <img class="pc pc-N" src="assets/pieces/N.svg" alt="">
+    </div>
+  </div>
+  <p class="lockup-caption lockup-caption-bottom">Your brand becomes a lion of the digital world!</p>
+</div>
+
+<!-- NAV -->
+<header class="nav" id="siteNav">
+  <a href="#top" class="nav-logo">
+    <img src="assets/Full_FullColor.png" alt="DigiDen">
+  </a>
+  <nav class="nav-links">
+    <a href="#services">Services</a>
+    <a href="#work">Work</a>
+    <a href="#process">Process</a>
+    <a href="#contact" class="nav-cta">Start a project</a>
+  </nav>
+  <button class="nav-burger" id="navBurger" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#services">Services</a>
+  <a href="#work">Work</a>
+  <a href="#process">Process</a>
+  <a href="#contact">Start a project</a>
+</div>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <div class="hero-hexfield" aria-hidden="true">
+      <svg viewBox="0 0 100 100" class="hero-hex-ring hex-ring-1"><polygon points="50,3 90,25 90,75 50,97 10,75 10,25"/></svg>
+      <svg viewBox="0 0 100 100" class="hero-hex-ring hex-ring-2"><polygon points="50,3 90,25 90,75 50,97 10,75 10,25"/></svg>
+      <svg viewBox="0 0 100 100" class="hero-hex-ring hex-ring-3"><polygon points="50,3 90,25 90,75 50,97 10,75 10,25"/></svg>
+    </div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">Digital growth studio</p>
+      <h1 class="hero-title">
+        <span class="line">Growth</span>
+        <span class="line">has an <em>edge.</em></span>
+      </h1>
+      <p class="hero-sub">Brand, web, performance and AI — engineered as one system, not four separate vendors. We build the facets; together they make one shape: your growth.</p>
+      <div class="hero-actions">
+        <a href="#contact" class="btn btn-primary">Start a project</a>
+        <a href="#work" class="btn btn-ghost">See the work</a>
+      </div>
+    </div>
+    <div class="hero-scroll-cue" aria-hidden="true"><span></span></div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="services" id="services">
+    <div class="section-head">
+      <p class="section-eyebrow">What we do</p>
+      <h2 class="section-title">Four disciplines.<br>One studio.</h2>
+      <p class="section-desc">Twelve services, grouped the way they actually get used — because a rebrand without the site to hold it, or ads without the analytics to prove them, is half a job.</p>
+    </div>
+
+    <div class="pillars">
+
+      <article class="pillar" data-pillar="1">
+        <div class="pillar-hex"><span>01</span></div>
+        <h3>Brand &amp; Strategy</h3>
+        <p class="pillar-intro">The thinking underneath everything else.</p>
+        <ul>
+          <li>Brand Identity &amp; Positioning</li>
+          <li>Growth Strategy &amp; Consulting</li>
+        </ul>
+      </article>
+
+      <article class="pillar" data-pillar="2">
+        <div class="pillar-hex"><span>02</span></div>
+        <h3>Web &amp; Tech Build</h3>
+        <p class="pillar-intro">The systems your brand runs on.</p>
+        <ul>
+          <li>Website Design &amp; Development</li>
+          <li>Ecommerce &amp; Online Store Builds</li>
+          <li>CRM &amp; Systems Integration</li>
+          <li>AI Integration &amp; Custom Chatbots</li>
+        </ul>
+      </article>
+
+      <article class="pillar" data-pillar="3">
+        <div class="pillar-hex"><span>03</span></div>
+        <h3>Performance &amp; Ads</h3>
+        <p class="pillar-intro">The engine that proves ROI.</p>
+        <ul>
+          <li>Performance Marketing &amp; Paid Media</li>
+          <li>Conversion Tracking &amp; Optimization</li>
+          <li>Analytics &amp; Reporting Infrastructure</li>
+        </ul>
+      </article>
+
+      <article class="pillar" data-pillar="4">
+        <div class="pillar-hex"><span>04</span></div>
+        <h3>Content &amp; Social</h3>
+        <p class="pillar-intro">The voice, published daily.</p>
+        <ul>
+          <li>Content Marketing &amp; SEO</li>
+          <li>Social Media Management</li>
+          <li>Social Content Production</li>
+        </ul>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- PORTFOLIO -->
+  <section class="portfolio" id="work">
+    <div class="section-head">
+      <p class="section-eyebrow">Selected work</p>
+      <h2 class="section-title">Recent facets.</h2>
+      <p class="section-desc">A sample of brand, social and web work. All example projects, built to show range.</p>
+    </div>
+
+    <div class="portfolio-filters" role="tablist">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="brand">Brand Design</button>
+      <button class="filter-btn" data-filter="social">Social Media</button>
+      <button class="filter-btn" data-filter="web">Websites</button>
+    </div>
+
+    <div class="portfolio-grid" id="portfolioGrid">
+      <!-- Populated by script.js -->
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="process" id="process">
+    <div class="section-head">
+      <p class="section-eyebrow">How we work</p>
+      <h2 class="section-title">Three stages. No hand-offs.</h2>
+    </div>
+    <div class="process-steps">
+      <div class="process-step">
+        <div class="process-num">01</div>
+        <h3>Discover</h3>
+        <p>Audit your brand, funnel and stack. We find the gap that's actually costing you growth, not the one that's easiest to sell.</p>
+      </div>
+      <div class="process-connector" aria-hidden="true"></div>
+      <div class="process-step">
+        <div class="process-num">02</div>
+        <h3>Build</h3>
+        <p>Brand, site, store or CRM — built by the same team that will run the marketing on top of it, so nothing gets lost in translation.</p>
+      </div>
+      <div class="process-connector" aria-hidden="true"></div>
+      <div class="process-step">
+        <div class="process-num">03</div>
+        <h3>Grow</h3>
+        <p>Ads, content and analytics run on a single dashboard. You see what's working weekly, not quarterly.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLIENTS MARQUEE -->
+  <section class="clients" aria-label="Client roster">
+    <div class="marquee">
+      <div class="marquee-track" id="marqueeTrack"></div>
+    </div>
+  </section>
+
+  <!-- CTA / CONTACT -->
+  <section class="cta-section" id="contact">
+    <div class="cta-hexfield" aria-hidden="true"></div>
+    <div class="section-head">
+      <p class="section-eyebrow">Start a project</p>
+      <h2 class="section-title">Tell us what<br>needs building.</h2>
+      <p class="section-desc">Two minutes. No sales call required to get a reply.</p>
+    </div>
+
+    <form class="project-form" id="projectForm">
+      <div class="form-row">
+        <label for="fName">Name</label>
+        <input type="text" id="fName" name="name" required>
+      </div>
+      <div class="form-row">
+        <label for="fEmail">Email</label>
+        <input type="email" id="fEmail" name="email" required>
+      </div>
+      <div class="form-row">
+        <label for="fService">What do you need?</label>
+        <select id="fService" name="service">
+          <option>Brand &amp; Strategy</option>
+          <option>Web &amp; Tech Build</option>
+          <option>Performance &amp; Ads</option>
+          <option>Content &amp; Social</option>
+          <option>Not sure yet</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label for="fBudget">Budget range</label>
+        <select id="fBudget" name="budget">
+          <option>Under $2,000</option>
+          <option>$2,000 – $5,000</option>
+          <option>$5,000 – $15,000</option>
+          <option>$15,000+</option>
+        </select>
+      </div>
+      <div class="form-row form-row-full">
+        <label for="fMsg">A bit about the project</label>
+        <textarea id="fMsg" name="message" rows="4"></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary form-submit">Send it over</button>
+    </form>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="footer-top">
+    <a href="#top" class="nav-logo">
+      <img src="assets/Full_FullColor.png" alt="DigiDen">
+    </a>
+    <div class="footer-links">
+      <a href="#services">Services</a>
+      <a href="#work">Work</a>
+      <a href="#process">Process</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 DigiDen Studio. All rights reserved.</span>
+    <span>Built as one system.</span>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
