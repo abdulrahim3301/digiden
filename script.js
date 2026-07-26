@@ -105,54 +105,9 @@ function initForm(){
 }
 
 /* ============================================================
-   HEX TRAVELER — scroll-driven journey through the page
-   ============================================================ */
-function initHexTraveler(){
-  const traveler = document.getElementById("hexTraveler");
-  gsap.registerPlugin(ScrollTrigger);
-
-  // Hidden until the hero brand-assemble sequence hands off to it (see initBrandAssemble)
-  gsap.set(traveler, { opacity: 0, scale: 1, xPercent: -50, yPercent: -50 });
-
-  const dockPoints = [
-    { sel: "[data-pillar='1']", xf: 0.9, yf: 0.15, rotate: 120 },
-    { sel: "[data-pillar='2']", xf: 0.9, yf: 0.15, rotate: 180 },
-    { sel: "[data-pillar='3']", xf: 0.9, yf: 0.15, rotate: 270 },
-    { sel: "[data-pillar='4']", xf: 0.9, yf: 0.15, rotate: 360 },
-    { sel: "#work", xf: 0.05, yf: 0.08, rotate: 450 },
-    { sel: "#process", xf: 0.95, yf: 0.1, rotate: 540 },
-    { sel: "#contact", xf: 0.5, yf: 0.12, rotate: 630 },
-  ];
-
-  dockPoints.forEach((point, i) => {
-    const el = document.querySelector(point.sel);
-    if (!el) return;
-    ScrollTrigger.create({
-      trigger: el,
-      start: point.start || "top 70%",
-      end: "bottom 30%",
-      onEnter: () => animateTo(point),
-      onEnterBack: () => animateTo(point),
-    });
-  });
-
-  function animateTo(point){
-    const el = document.querySelector(point.sel);
-    const r = el.getBoundingClientRect();
-    const x = r.left + r.width * point.xf + window.scrollX;
-    const y = r.top + r.height * point.yf + window.scrollY;
-    gsap.to(traveler, {
-      x, y, rotate: point.rotate, scale: 1,
-      duration: 1.1, ease: "power3.inOut"
-    });
-  }
-
-  window.addEventListener("resize", () => ScrollTrigger.refresh());
-}
-
-/* ============================================================
    BRAND ASSEMBLE — hero content vanishes, the mark zooms in from
-   the screen edges to settle centered, DIGI/DEN slide in to flank it
+   the screen edges to settle centered, DIGI/DEN slide in to flank it.
+   Plain scrub: scroll down to assemble, scroll up to reverse it.
    ============================================================ */
 function initBrandAssemble(){
   gsap.registerPlugin(ScrollTrigger);
@@ -167,7 +122,6 @@ function initBrandAssemble(){
   const right = document.querySelector(".lockup-right");
   const capTop = document.querySelector(".lockup-caption-top");
   const capBottom = document.querySelector(".lockup-caption-bottom");
-  const traveler = document.getElementById("hexTraveler");
   if (!hero || !icon) return;
 
   gsap.set(icon, { opacity: 0, scale: 12, transformOrigin: "50% 50%" });
@@ -176,54 +130,39 @@ function initBrandAssemble(){
   gsap.set(capTop, { opacity: 0, y: -16 });
   gsap.set(capBottom, { opacity: 0, y: 16 });
 
-  // Once the lockup finishes assembling, the traveling mark takes over from
-  // the center icon and drops away to the right. Scrolling back up flies it
-  // straight back to that exact centered spot, upright, before handing
-  // control back to the (already-correctly-positioned) lockup icon.
-  function handoffToTraveler(){
-    if (!traveler) return;
-    const r = icon.getBoundingClientRect();
-    const x = r.left + r.width / 2 + window.scrollX;
-    const y = r.top + r.height / 2 + window.scrollY;
-    // Match the traveler's size to the lockup icon it's replacing so the
-    // handoff is seamless, then let it fall away to the right rather than
-    // jumping straight to a section dock point.
-    gsap.set(traveler, { x, y, opacity: 1, scale: r.width / 64, rotate: 0 });
-    gsap.set(assemble, { autoAlpha: 0 });
-    gsap.to(traveler, {
-      x: x + window.innerWidth * 0.3,
-      y: y + window.innerHeight * 0.5,
-      rotate: 35,
-      scale: 1,
-      duration: 1.3,
-      ease: "power2.in"
-    });
-  }
-  function handoffToLockup(){
-    if (!traveler) return;
-    const r = icon.getBoundingClientRect();
-    const x = r.left + r.width / 2 + window.scrollX;
-    const y = r.top + r.height / 2 + window.scrollY;
-    gsap.set(assemble, { autoAlpha: 1 });
-    gsap.killTweensOf(traveler);
-    gsap.to(traveler, {
-      x, y, rotate: 0, scale: r.width / 64, opacity: 0,
-      duration: 0.6, ease: "power2.inOut"
-    });
+  // The lockup is a fixed full-viewport overlay so it can bleed past the
+  // hero's own width; it must be hidden once scrolled by, restored if the
+  // user scrolls back up. Driven off live scroll progress every update
+  // (rather than onLeave/onEnterBack) so a single fast scroll that jumps
+  // clean across the whole pin range can't skip the transition and leave
+  // it stuck open over the sections below.
+  let assembleVisible = true;
+  function syncAssembleVisibility(progress){
+    const shouldShow = progress < 0.999;
+    if (shouldShow === assembleVisible) return;
+    assembleVisible = shouldShow;
+    gsap.to(assemble, { autoAlpha: shouldShow ? 1 : 0, duration: 0.3 });
   }
 
   const tl = gsap.timeline({
     scrollTrigger: {
       trigger: hero,
       start: "top top",
-      end: "+=120%",
+      end: "+=74%",
       scrub: 0.6,
       pin: true,
       anticipatePin: 1,
-      onLeave: handoffToTraveler,
-      onEnterBack: handoffToLockup,
     }
   });
+
+  // GSAP's scrub proxy updates the timeline's progress with events
+  // suppressed, and ScrollTrigger tracks scroll position via its own
+  // internal polling rather than a plain "scroll" event — so neither the
+  // timeline's onUpdate nor a window scroll listener fire reliably here.
+  // GSAP's ticker runs every frame regardless, so it's the one thing
+  // guaranteed to catch the transition.
+  const heroTrigger = tl.scrollTrigger;
+  gsap.ticker.add(() => syncAssembleVisibility(heroTrigger.progress));
 
   tl.to(content, { opacity: 0, y: -40, duration: 0.3, ease: "power1.in" }, 0)
     .to(scrollCue, { opacity: 0, duration: 0.15 }, 0)
@@ -233,7 +172,10 @@ function initBrandAssemble(){
     .to(left, { opacity: 1, x: 0, duration: 0.4, ease: "power2.out" }, 0.5)
     .to(right, { opacity: 1, x: 0, duration: 0.4, ease: "power2.out" }, 0.5)
     .to(capTop, { opacity: 1, y: 0, duration: 0.18, ease: "power2.out" }, 0.82)
-    .to(capBottom, { opacity: 1, y: 0, duration: 0.18, ease: "power2.out" }, 0.82);
+    .to(capBottom, { opacity: 1, y: 0, duration: 0.18, ease: "power2.out" }, 0.82)
+    // Hold the completed lockup in place (nothing animates here) before the
+    // pin releases and the page continues scrolling normally.
+    .to({}, { duration: 0.35 });
 }
 
 /* ============================================================
@@ -291,9 +233,6 @@ document.addEventListener("DOMContentLoaded", () => {
   initHeroEntrance();
   initReveals();
 
-  // Give layout a tick to settle before measuring positions for the traveler
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    initHexTraveler();
-    initBrandAssemble();
-  }));
+  // Give layout a tick to settle before measuring positions
+  requestAnimationFrame(() => requestAnimationFrame(initBrandAssemble));
 });

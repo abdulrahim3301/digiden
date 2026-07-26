@@ -38,7 +38,7 @@ button{ font-family: inherit; cursor:pointer; }
   *{ animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
 }
 
-/* ============ CURSOR / TRAVELER ============ */
+/* ============ CURSOR ============ */
 .cursor-dot{
   position: fixed; top:0; left:0; width:8px; height:8px; border-radius:50%;
   background: var(--teal); pointer-events:none; z-index: 9999;
@@ -46,16 +46,6 @@ button{ font-family: inherit; cursor:pointer; }
   display:none;
 }
 @media (min-width: 900px){ .cursor-dot{ display:block; } }
-
-.hex-traveler{
-  position: absolute; top: 0; left: 0;
-  width: 64px; height: 64px;
-  z-index: 500;
-  pointer-events: none;
-  will-change: transform;
-  filter: drop-shadow(0 8px 24px rgba(20,240,196,0.35));
-}
-.hex-traveler img{ width:100%; height:100%; }
 
 /* ============ LAYOUT HELPERS ============ */
 main, .footer{ position: relative; z-index: 1; }
