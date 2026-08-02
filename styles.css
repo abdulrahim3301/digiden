@@ -305,6 +305,88 @@ section{
 }
 .profile-back:hover{ color: var(--teal); }
 
+/* ============ PROFILE FRAME HERO (photo-grow scroll effect) ============
+   A small skewed frame with stacked "echo" outlines behind it, tilting
+   with the cursor. On scroll it grows to fill the viewport before the
+   page continues normally into the bio content below. Desktop only —
+   mobile gets a plain static photo block instead. */
+.profile-frame-hero{
+  max-width: none; width: 100%; margin: 0;
+  position: relative; min-height: 100vh; overflow: hidden;
+  display:flex; align-items:center;
+}
+.frame-hero-content{
+  position:relative; z-index:2; max-width: 440px;
+  padding: 140px 0 60px 40px;
+}
+.frame-hero-content .profile-back{ margin-bottom: 28px; }
+.frame-hero-eyebrow{
+  font-family: var(--font-mono); color: var(--teal); text-transform:uppercase;
+  letter-spacing: 0.1em; font-size: 13px; margin-bottom: 18px; display:block;
+}
+.frame-hero-title{ font-size: clamp(40px, 6vw, 72px); font-weight:700; margin-bottom: 16px; }
+.frame-hero-hint{ color: var(--text-faint); font-family: var(--font-mono); font-size: 13px; }
+
+.frame-stack{ position:absolute; inset:0; z-index:1; pointer-events:none; }
+.frame-echo{
+  position:absolute;
+  border: 1px solid rgba(20,240,196,0.22);
+  clip-path: polygon(10% 6%, 100% 0%, 100% 100%, 0% 100%);
+  will-change: transform;
+}
+/* Each echo behind the main frame is progressively larger and shifted
+   up and to the right, so the stack fans out toward the upper-right
+   like a deck of cards — echo-4 is furthest back. */
+.echo-1{ top: 13%; right: -2%; width: 44%; height: 74%; }
+.echo-2{ top: 11%; right: -4%; width: 46%; height: 78%; }
+.echo-3{ top: 9%;  right: -6%; width: 48%; height: 82%; }
+.echo-4{ top: 7%;  right: -8%; width: 50%; height: 86%; }
+.frame-main{
+  position:absolute; top: 15%; right: 0; width: 42%; height: 70%;
+  clip-path: polygon(10% 6%, 100% 0%, 100% 100%, 0% 100%);
+  background: linear-gradient(135deg,#14bea2,#13273a);
+  overflow:hidden;
+  will-change: clip-path, top, right, width, height;
+}
+/* The cutout photo overlaps frame-main and pokes out above its top edge —
+   a separate layer (not clipped by frame-main's overflow) so the head can
+   extend past the frame, like the reference. It scales up in sync with
+   frame-main during the scroll-grow, ending as a large portrait over the
+   full-bleed gradient. */
+.frame-cutout{
+  position:absolute; z-index:2;
+  /* top uses max() so it never sits closer than 110px to the true top —
+     percentage alone could put the head behind the fixed nav on shorter
+     viewports. height is computed (not "bottom") so the feet land exactly
+     on frame-main's own bottom edge (85% down — its top:15% + height:70%);
+     img is a replaced element, so top+bottom+auto-height would get
+     silently overridden by the image's own intrinsic aspect ratio instead
+     of actually reaching that edge. */
+  top: max(9%, 110px); right: 6%; width: 34%;
+  height: calc(85% - max(9%, 110px));
+  object-fit: contain; object-position: bottom center;
+  pointer-events:none;
+  will-change: top, right, width, height;
+}
+
+@media (max-width: 900px){
+  .profile-frame-hero{
+    flex-direction:column; align-items:flex-start; min-height:0;
+    padding: 120px 32px 60px;
+  }
+  .frame-hero-content{ padding:0; }
+  .frame-stack{ position:relative; inset:auto; width:100%; }
+  .frame-echo{ display:none; }
+  .frame-main{
+    position:relative; top:auto; right:auto; width:100%; height:320px;
+    margin-top:32px; clip-path:none; border-radius:20px;
+  }
+  .frame-cutout{
+    position:absolute; top:32px; right:4%; width:auto; height:320px; bottom:auto;
+    max-width:80%;
+  }
+}
+
 @media (max-width: 700px){
   .profile-hero{ flex-direction:column; align-items:center; text-align:center; }
   .company-chip-list, .profile-actions{ justify-content:center; }
@@ -395,6 +477,53 @@ section{
 }
 .marquee-track span::before{ content:''; width:6px; height:6px; background: var(--teal); border-radius:50%; }
 @keyframes marquee{ from{ transform: translateX(0); } to{ transform: translateX(-50%); } }
+
+/* ============ PORTFOLIO STRIP (profile page) ============
+   A gradient "PORTFOLIO" anchor card flips in from the right, then the
+   logo strip unfurls left-to-right (clip-path reveal) like an accordion.
+   The logo cards autoscroll continuously behind the anchor, which stays
+   fixed in place. */
+.portfolio-strip{ padding: 0 0 60px; }
+.portfolio-strip-inner{
+  display:flex; align-items:stretch; height: 380px;
+  border-radius: 20px; overflow:hidden;
+  border: 1px solid var(--line);
+}
+.portfolio-anchor{
+  flex: 0 0 200px;
+  background: linear-gradient(135deg,#14bea2,#13273a);
+  display:flex; align-items:center; justify-content:center;
+  position:relative; z-index:2;
+}
+.portfolio-anchor span{
+  writing-mode: vertical-rl; transform: rotate(180deg);
+  font-family: var(--font-display); font-weight:700; letter-spacing:0.2em;
+  font-size: 22px; color: var(--white); text-transform:uppercase;
+}
+.portfolio-scroll-wrap{ flex:1; overflow:hidden; position:relative; }
+.portfolio-scroll-track{
+  display:flex; gap:20px; height:100%; width:max-content;
+  padding: 0 20px;
+  animation: portfolioScroll 18s linear infinite;
+}
+.portfolio-logo-card{
+  flex: 0 0 240px; height:100%;
+  background: var(--bg-alt); border:1px solid var(--line); border-radius:16px;
+  display:flex; align-items:center; justify-content:center;
+  text-align:center; padding: 20px;
+}
+.portfolio-logo-card span{
+  font-family: var(--font-display); font-weight:700; font-size:20px; color: var(--text-soft);
+}
+@keyframes portfolioScroll{ from{ transform: translateX(0); } to{ transform: translateX(-50%); } }
+
+@media (max-width: 700px){
+  .portfolio-strip-inner{ height:280px; }
+  .portfolio-anchor{ flex-basis:110px; }
+  .portfolio-anchor span{ font-size:15px; }
+  .portfolio-logo-card{ flex-basis:170px; }
+  .portfolio-logo-card span{ font-size:16px; }
+}
 
 /* ============ CTA / CONTACT ============ */
 .cta-section{ position:relative; }

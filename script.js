@@ -182,6 +182,89 @@ function initBrandAssemble(){
 }
 
 /* ============================================================
+   PROFILE FRAME HERO — stacked "echo" frame tilts with the cursor;
+   scrolling past it grows the frame to fill the screen, then the page
+   continues normally into the bio content. Individual team pages only;
+   no-ops everywhere else. Desktop only (see matching CSS breakpoint).
+   ============================================================ */
+function initProfileFrame(){
+  const hero = document.getElementById("profileFrameHero");
+  const stack = document.getElementById("frameStack");
+  const main = document.getElementById("frameMain");
+  const cutout = document.getElementById("frameCutout");
+  const content = document.getElementById("frameHeroContent");
+  if (!hero || !stack || !main) return;
+  if (!window.matchMedia("(min-width: 900px)").matches) return;
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  const echoes = stack.querySelectorAll(".frame-echo");
+
+  hero.addEventListener("mousemove", (e) => {
+    const r = hero.getBoundingClientRect();
+    const nx = (e.clientX - r.left - r.width / 2) / (r.width / 2);
+    const ny = (e.clientY - r.top - r.height / 2) / (r.height / 2);
+    echoes.forEach((echo, i) => {
+      const depth = (i + 1) * 6;
+      gsap.to(echo, { x: nx * depth, y: ny * depth, duration: 0.6, ease: "power2.out" });
+    });
+    if (cutout) gsap.to(cutout, { x: nx * 4, y: ny * 4, duration: 0.6, ease: "power2.out" });
+  });
+  hero.addEventListener("mouseleave", () => {
+    echoes.forEach(echo => gsap.to(echo, { x: 0, y: 0, duration: 0.6, ease: "power2.out" }));
+    if (cutout) gsap.to(cutout, { x: 0, y: 0, duration: 0.6, ease: "power2.out" });
+  });
+
+  const tl = gsap.timeline({
+    scrollTrigger: {
+      trigger: hero,
+      start: "top top",
+      end: "+=100%",
+      scrub: 0.6,
+      pin: true,
+    }
+  });
+
+  tl.to(echoes, { opacity: 0, duration: 0.3 }, 0)
+    .to(content, { opacity: 0, y: -30, duration: 0.3 }, 0)
+    .to(main, {
+      top: 0, right: 0, width: "100%", height: "100%",
+      clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
+      duration: 1, ease: "power2.inOut"
+    }, 0.1);
+
+  if (cutout) {
+    tl.to(cutout, {
+      top: "5%", right: "8%", width: "38%", height: "95%",
+      duration: 1, ease: "power2.inOut"
+    }, 0.1);
+  }
+}
+
+/* ============================================================
+   PORTFOLIO STRIP — gradient anchor card flips in from the right,
+   the logo strip unfurls left-to-right, then autoscrolls continuously.
+   Individual team pages only; no-op everywhere else.
+   ============================================================ */
+function initPortfolioStrip(){
+  const section = document.getElementById("portfolioStrip");
+  const anchor = document.getElementById("portfolioAnchor");
+  const wrap = document.getElementById("portfolioScrollWrap");
+  if (!section || !anchor || !wrap) return;
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  gsap.set(anchor, { opacity: 0, x: 80, rotateY: 60, transformPerspective: 800 });
+  gsap.set(wrap, { clipPath: "inset(0 100% 0 0)" });
+
+  gsap.timeline({
+    scrollTrigger: { trigger: section, start: "top 75%" }
+  })
+    .to(anchor, { opacity: 1, x: 0, rotateY: 0, duration: 0.6, ease: "power2.out" })
+    .to(wrap, { clipPath: "inset(0 0% 0 0)", duration: 0.9, ease: "power2.inOut" }, "-=0.2");
+}
+
+/* ============================================================
    HERO ENTRANCE
    ============================================================ */
 function initHeroEntrance(){
@@ -237,5 +320,9 @@ document.addEventListener("DOMContentLoaded", () => {
   initReveals();
 
   // Give layout a tick to settle before measuring positions
-  requestAnimationFrame(() => requestAnimationFrame(initBrandAssemble));
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    initBrandAssemble();
+    initProfileFrame();
+    initPortfolioStrip();
+  }));
 });

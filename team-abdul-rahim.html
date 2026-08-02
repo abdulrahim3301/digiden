@@ -40,30 +40,60 @@
 </div>
 
 <main>
-  <section>
-    <a href="team.html" class="profile-back">← Back to team</a>
-    <div class="profile-hero">
-      <div class="team-avatar profile-avatar" style="background:linear-gradient(135deg,#14bea2,#13273a)"><span>AR</span></div>
-      <div class="profile-info">
-        <h1>Abdul Rahim</h1>
-        <span class="profile-role">Co-Founder &amp; Head of Digital Growth</span>
-        <p class="profile-bio">Currently Head of Digital Growth at Atari Technologies, where he built and now leads a cross-functional team of designers, video editors, web developers and social media managers revamping the digital presence of 17+ established UK-based brands across food, leisure, education, healthcare, news and legal sectors.</p>
-        <p class="profile-bio">Nearly a decade as a top-rated brand strategist on Upwork, delivering full branding packages to 60+ clients across the globe. Alongside that, several years of creative and growth roles across Punjab Government digital initiatives — running campaigns, standing up analytics infrastructure, and generating five-figure lead volumes for public-sector training programs.</p>
 
-        <span class="profile-companies-label">Where he's worked</span>
-        <div class="company-chip-list">
-          <span class="company-chip">Atari Technologies — Head of Digital Growth</span>
-          <span class="company-chip">Upwork — Top-Rated Brand Strategist</span>
-          <span class="company-chip">Punjab IT Board</span>
-        </div>
+  <!-- FRAME HERO: stacked echo frame, tilts with cursor, grows full-bleed on scroll -->
+  <section class="profile-frame-hero" id="profileFrameHero">
+    <div class="frame-hero-content" id="frameHeroContent">
+      <a href="team.html" class="profile-back">← Back to team</a>
+      <span class="frame-hero-eyebrow">Co-Founder &amp; Head of Digital Growth</span>
+      <h1 class="frame-hero-title">Abdul Rahim</h1>
+      <p class="frame-hero-hint">Scroll ↓</p>
+    </div>
+    <div class="frame-stack" id="frameStack">
+      <div class="frame-echo echo-4"></div>
+      <div class="frame-echo echo-3"></div>
+      <div class="frame-echo echo-2"></div>
+      <div class="frame-echo echo-1"></div>
+      <div class="frame-main" id="frameMain"></div>
+      <img class="frame-cutout" id="frameCutout" src="assets/team/abdul-rahim.png" alt="Abdul Rahim">
+    </div>
+  </section>
 
-        <div class="profile-actions">
-          <a href="index.html#contact" class="btn btn-primary">Start a project</a>
-          <a href="https://www.linkedin.com/in/abdulrahim3301/" class="btn btn-ghost" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
+  <!-- BIO -->
+  <section class="profile-bio-section">
+    <p class="profile-bio">Currently Head of Digital Growth at Atari Technologies, where he built and now leads a cross-functional team of designers, video editors, web developers and social media managers revamping the digital presence of 17+ established UK-based brands across food, leisure, education, healthcare, news and legal sectors.</p>
+    <p class="profile-bio">Nearly a decade as a top-rated brand strategist on Upwork, delivering full branding packages to 60+ clients across the globe. Alongside that, several years of creative and growth roles across Punjab Government digital initiatives — running campaigns, standing up analytics infrastructure, and generating five-figure lead volumes for public-sector training programs.</p>
+
+    <span class="profile-companies-label">Where he's worked</span>
+    <div class="company-chip-list">
+      <span class="company-chip">Atari Technologies — Head of Digital Growth</span>
+      <span class="company-chip">Upwork — Top-Rated Brand Strategist</span>
+      <span class="company-chip">Punjab IT Board</span>
+    </div>
+
+    <div class="profile-actions">
+      <a href="index.html#contact" class="btn btn-primary">Start a project</a>
+      <a href="https://www.linkedin.com/in/abdulrahim3301/" class="btn btn-ghost" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
+    </div>
+  </section>
+
+  <!-- PORTFOLIO STRIP -->
+  <section class="portfolio-strip" id="portfolioStrip">
+    <div class="portfolio-strip-inner">
+      <div class="portfolio-anchor" id="portfolioAnchor"><span>Portfolio</span></div>
+      <div class="portfolio-scroll-wrap" id="portfolioScrollWrap">
+        <div class="portfolio-scroll-track">
+          <div class="portfolio-logo-card"><span>Atari Technologies</span></div>
+          <div class="portfolio-logo-card"><span>Upwork</span></div>
+          <div class="portfolio-logo-card"><span>Punjab IT Board</span></div>
+          <div class="portfolio-logo-card"><span>Atari Technologies</span></div>
+          <div class="portfolio-logo-card"><span>Upwork</span></div>
+          <div class="portfolio-logo-card"><span>Punjab IT Board</span></div>
         </div>
       </div>
     </div>
   </section>
+
 </main>
 
 <footer class="footer">
