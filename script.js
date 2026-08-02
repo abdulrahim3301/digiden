@@ -30,6 +30,7 @@ function initials(name){
 
 function buildPortfolio(){
   const grid = document.getElementById("portfolioGrid");
+  if (!grid) return;
   grid.innerHTML = PORTFOLIO.map((p, i) => `
     <div class="port-card" data-cat="${p.cat}">
       <div class="port-stack">
@@ -64,6 +65,7 @@ function initFilters(){
 
 function buildMarquee(){
   const track = document.getElementById("marqueeTrack");
+  if (!track) return;
   const names = PORTFOLIO.map(p => p.name);
   const doubled = [...names, ...names];
   track.innerHTML = doubled.map(n => `<span>${n}</span>`).join("");
@@ -95,6 +97,7 @@ function initCursor(){
    ============================================================ */
 function initForm(){
   const form = document.getElementById("projectForm");
+  if (!form) return;
   form.addEventListener("submit", e => {
     e.preventDefault();
     const btn = form.querySelector(".form-submit");
