@@ -221,22 +221,21 @@ section{
 @media (max-width: 600px){ .pillars{ grid-template-columns: 1fr; } }
 
 /* ============ TEAM STRIP (landing page teaser) ============ */
-.team-grid{ display:grid; grid-template-columns: repeat(5, 1fr); gap: 20px; margin-bottom: 48px; }
+/* Same pop-out-photo treatment as team.html's full roster cards, just
+   scaled down — row-gap has to clear the photo's overflow above each card. */
+.team-grid{ display:grid; grid-template-columns: repeat(5, 1fr); column-gap: 20px; row-gap: 70px; padding-top: 30px; margin-bottom: 48px; }
 .team-card{
+  position:relative;
   background: rgba(255,255,255,0.03);
   border: 1px solid var(--line);
   border-radius: 18px;
-  padding: 30px 20px;
+  padding: 0 20px 30px;
   text-align: center;
   transition: border-color .3s, transform .3s, background .3s;
 }
 .team-card:hover{ border-color: rgba(20,240,196,0.4); background: rgba(255,255,255,0.05); transform: translateY(-6px); }
-.team-avatar{
-  width: 72px; height:72px; margin: 0 auto 18px;
-  border-radius: 50%;
-  display:flex; align-items:center; justify-content:center;
-  font-family: var(--font-display); font-weight:700; font-size:19px; color: rgba(255,255,255,0.95);
-}
+.team-card .team-photo-box{ height: 90px; margin-bottom: 14px; }
+.team-card .team-photo-box img{ height: 150px; max-width: 68%; }
 .team-card h3{ font-size: 16px; margin-bottom: 4px; }
 .team-role{
   font-family: var(--font-mono); font-size: 11px; color: var(--teal);
@@ -262,17 +261,35 @@ section{
   max-width: 900px; margin: 0 auto 24px;
 }
 .team-banner-sub{ color: var(--text-soft); font-size: 18px; max-width: 560px; margin: 0 auto; }
-.team-full-grid{ display:flex; flex-direction:column; gap: 24px; }
+/* Grid of vertical cards — the photo bleeds out above each card's own top
+   edge (see .team-photo-box below), so row-gap has to be generous enough
+   that a popped-out head never collides with the card in the row above. */
+.team-full-grid{ display:grid; grid-template-columns: repeat(2, 1fr); column-gap: 28px; row-gap: 120px; }
 .team-full-card{
-  display:flex; gap: 32px; align-items:flex-start;
+  position:relative;
   background: rgba(255,255,255,0.03);
   border: 1px solid var(--line);
   border-radius: 20px;
-  padding: 36px;
+  padding: 0 32px 32px;
+  transition: border-color .3s, transform .3s, background .3s;
 }
-.team-avatar-lg{ width: 110px; height:110px; font-size: 28px; flex-shrink:0; }
+.team-full-card:hover{ border-color: rgba(20,240,196,0.4); background: rgba(255,255,255,0.05); transform: translateY(-6px); }
+/* Photo sits flush with the card's top edge; the box itself is shorter
+   than the image, and object-position:bottom + overflow:visible let the
+   head spill out above the card border instead of being cropped. */
+.team-photo-box{
+  height: 160px;
+  display:flex; align-items:flex-end; justify-content:center;
+  overflow:visible;
+  margin-bottom: 24px;
+}
+.team-photo-box img{
+  height: 250px; width:auto; max-width: 100%;
+  object-fit:contain; object-position:bottom center;
+  display:block;
+}
 .team-full-info h2{ font-size: 22px; margin-bottom: 4px; }
-.team-full-bio{ font-size: 15px; color: var(--text-soft); margin: 14px 0 20px; max-width: 640px; }
+.team-full-bio{ font-size: 15px; color: var(--text-soft); margin: 14px 0 20px; }
 .company-chip-list{ display:flex; flex-wrap:wrap; gap: 8px; margin-bottom: 20px; }
 .company-chip{
   font-family: var(--font-mono); font-size: 12px; color: var(--text-soft);
@@ -280,19 +297,16 @@ section{
 }
 .team-full-note{ font-size: 13px; color: var(--text-faint); font-style: italic; margin-bottom: 20px; }
 
+@media (max-width: 900px){
+  .team-full-grid{ grid-template-columns: 1fr; row-gap: 100px; }
+}
 @media (max-width: 700px){
-  .team-full-card{ flex-direction:column; align-items:center; text-align:center; }
+  .team-full-card{ text-align:center; }
+  .team-photo-box{ justify-content:center; }
   .company-chip-list{ justify-content:center; }
 }
 
 /* ============ TEAM PROFILE PAGE (individual member) ============ */
-.profile-hero{ padding-top: 180px; display:flex; gap: 48px; align-items:flex-start; }
-.profile-avatar{ width: 160px; height:160px; font-size: 42px; flex-shrink:0; }
-.profile-info h1{ font-size: clamp(32px, 4vw, 44px); margin-bottom: 6px; }
-.profile-role{
-  font-family: var(--font-mono); color: var(--teal); text-transform:uppercase;
-  letter-spacing: 0.08em; font-size: 14px; margin-bottom: 24px; display:block;
-}
 .profile-bio{ color: var(--text-soft); font-size: 17px; max-width: 640px; margin-bottom: 28px; }
 .profile-companies-label{
   font-family: var(--font-mono); font-size: 12px; color: var(--text-faint);
@@ -336,13 +350,16 @@ section{
 }
 /* Each echo behind the main frame is progressively larger and shifted
    up and to the right, so the stack fans out toward the upper-right
-   like a deck of cards — echo-4 is furthest back. */
-.echo-1{ top: 13%; right: -2%; width: 44%; height: 74%; }
-.echo-2{ top: 11%; right: -4%; width: 46%; height: 78%; }
-.echo-3{ top: 9%;  right: -6%; width: 48%; height: 82%; }
-.echo-4{ top: 7%;  right: -8%; width: 50%; height: 86%; }
+   like a deck of cards — echo-4 is furthest back. frame-main sits with a
+   right margin (not flush against the section edge) specifically so this
+   fan has room to be visible instead of getting clipped by the section's
+   overflow:hidden — echo-4's right:0 just reaches that edge, never past it. */
+.echo-1{ top: 12.5%; right: 4.5%; width: 44%; height: 76%; }
+.echo-2{ top: 10%;   right: 3%;   width: 46%; height: 82%; }
+.echo-3{ top: 7.5%;  right: 1.5%; width: 48%; height: 88%; }
+.echo-4{ top: 5%;    right: 0%;   width: 50%; height: 94%; }
 .frame-main{
-  position:absolute; top: 15%; right: 0; width: 42%; height: 70%;
+  position:absolute; top: 15%; right: 6%; width: 42%; height: 70%;
   clip-path: polygon(10% 6%, 100% 0%, 100% 100%, 0% 100%);
   background: linear-gradient(135deg,#14bea2,#13273a);
   overflow:hidden;
