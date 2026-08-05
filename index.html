@@ -48,7 +48,7 @@
     <img src="assets/Full_FullColor.png" alt="DigiDen">
   </a>
   <nav class="nav-links">
-    <a href="#services">Services</a>
+    <a href="services.html">Services</a>
     <a href="team.html">Team</a>
     <a href="#work">Work</a>
     <a href="#process">Process</a>
@@ -61,7 +61,7 @@
 </header>
 
 <div class="mobile-menu" id="mobileMenu">
-  <a href="#services">Services</a>
+  <a href="services.html">Services</a>
   <a href="team.html">Team</a>
   <a href="#work">Work</a>
   <a href="#process">Process</a>
@@ -148,6 +148,8 @@
       </article>
 
     </div>
+
+    <a href="services.html" class="btn btn-ghost services-strip-cta">See the full service breakdown →</a>
   </section>
 
   <!-- TEAM -->
@@ -259,49 +261,59 @@
     </div>
   </section>
 
-  <!-- CTA / CONTACT -->
+  <!-- CTA / CONTACT + PRICING CALCULATOR -->
   <section class="cta-section" id="contact">
     <div class="cta-hexfield" aria-hidden="true"></div>
     <div class="section-head">
       <p class="section-eyebrow">Start a project</p>
       <h2 class="section-title">Tell us what<br>needs building.</h2>
-      <p class="section-desc">Two minutes. No sales call required to get a reply.</p>
+      <p class="section-desc">Pick what you need below for an instant estimate, then send it over — no sales call required just to hear a number.</p>
     </div>
 
-    <form class="project-form" id="projectForm">
+    <form class="calculator-card" id="projectForm">
       <input type="hidden" name="source" value="contact_form">
-      <div class="form-row">
-        <label for="fName">Name</label>
-        <input type="text" id="fName" name="name" required>
+      <input type="hidden" name="estimate" id="calcEstimateHidden">
+
+      <div class="calc-services">
+        <label>Select the services you need</label>
+        <div class="calc-dropdown" id="calcDropdown">
+          <button type="button" class="calc-dropdown-toggle" id="calcDropdownToggle" disabled>
+            <span id="calcDropdownLabel">Loading services…</span>
+            <span class="calc-dropdown-arrow">▾</span>
+          </button>
+          <div class="calc-dropdown-panel" id="calcDropdownPanel"></div>
+        </div>
       </div>
-      <div class="form-row">
-        <label for="fEmail">Email</label>
-        <input type="email" id="fEmail" name="email" required>
+
+      <p class="calc-hours-hint" id="calcHoursHint" hidden>How many hours of work do you think each service would need? Just your best guess — we'll pin down the exact scope together on a call.</p>
+      <div class="calc-hours-list" id="calcHoursList"></div>
+
+      <button type="button" class="btn btn-primary calc-btn" id="calcBtn">Calculate</button>
+
+      <div class="calc-result" id="calcResult" hidden>
+        <span class="calc-result-label">Estimated Cost</span>
+        <span class="calc-result-value" id="calcResultValue">$0</span>
+        <p class="calc-result-note" id="calcResultCaveat"></p>
+        <p class="calc-result-note" id="calcResultNote"></p>
       </div>
-      <div class="form-row">
-        <label for="fService">What do you need?</label>
-        <select id="fService" name="service">
-          <option>Brand &amp; Strategy</option>
-          <option>Web &amp; Tech Build</option>
-          <option>Performance &amp; Ads</option>
-          <option>Content &amp; Social</option>
-          <option>Not sure yet</option>
-        </select>
+
+      <div class="calc-lead-fields" id="calcLeadFields" hidden>
+        <h3>Let's get on a call.</h3>
+        <p>Send us this estimate and a bit about the project — we'll set up a quick call to pin down the exact scope and timeline.</p>
+        <div class="form-row">
+          <label for="fName">Name</label>
+          <input type="text" id="fName" name="name" required>
+        </div>
+        <div class="form-row">
+          <label for="fEmail">Email</label>
+          <input type="email" id="fEmail" name="email" required>
+        </div>
+        <div class="form-row form-row-full">
+          <label for="fMsg">A bit about the project</label>
+          <textarea id="fMsg" name="message" rows="4"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary form-submit">Send it over</button>
       </div>
-      <div class="form-row">
-        <label for="fBudget">Budget range</label>
-        <select id="fBudget" name="budget">
-          <option>Under $2,000</option>
-          <option>$2,000 – $5,000</option>
-          <option>$5,000 – $15,000</option>
-          <option>$15,000+</option>
-        </select>
-      </div>
-      <div class="form-row form-row-full">
-        <label for="fMsg">A bit about the project</label>
-        <textarea id="fMsg" name="message" rows="4"></textarea>
-      </div>
-      <button type="submit" class="btn btn-primary form-submit">Send it over</button>
     </form>
   </section>
 
@@ -313,7 +325,7 @@
       <img src="assets/Full_FullColor.png" alt="DigiDen">
     </a>
     <div class="footer-links">
-      <a href="#services">Services</a>
+      <a href="services.html">Services</a>
       <a href="team.html">Team</a>
       <a href="#work">Work</a>
       <a href="#process">Process</a>

@@ -125,10 +125,6 @@ function handleLeadFormSubmit(form, source){
   });
 }
 
-function initForm(){
-  handleLeadFormSubmit(document.getElementById("projectForm"), "contact_form");
-}
-
 /* ============================================================
    PRICING CALCULATOR — service names/rates are pulled live from
    the public "External" tab of the pricing Google Sheet via the
@@ -199,16 +195,30 @@ function initPricingCalculator(){
   const toggle = document.getElementById("calcDropdownToggle");
   const label = document.getElementById("calcDropdownLabel");
   const panel = document.getElementById("calcDropdownPanel");
+  const hoursHint = document.getElementById("calcHoursHint");
   const hoursList = document.getElementById("calcHoursList");
   const calcBtn = document.getElementById("calcBtn");
   const resultBox = document.getElementById("calcResult");
   const resultValue = document.getElementById("calcResultValue");
+  const resultCaveat = document.getElementById("calcResultCaveat");
   const resultNote = document.getElementById("calcResultNote");
-  const leadForm = document.getElementById("calcLeadForm");
+  const leadFields = document.getElementById("calcLeadFields");
   const estimateHidden = document.getElementById("calcEstimateHidden");
-  if (!dropdown || !toggle || !panel || !hoursList || !calcBtn) return;
+  const form = calcBtn ? calcBtn.closest("form") : null;
+  if (!dropdown || !toggle || !panel || !hoursList || !calcBtn || !form) return;
 
-  handleLeadFormSubmit(leadForm, "pricing_calculator");
+  // The calculator lives inside the same <form> as the lead fields — this
+  // is the one form for the whole page, and its own hidden "source" input
+  // (set per-page in the HTML) is what tells handleLeadFormSubmit which
+  // page a submission came from.
+  const source = form.querySelector('[name="source"]');
+  handleLeadFormSubmit(form, source ? source.value : "unknown");
+
+  // Hours inputs sit inside the same form as the (initially hidden) submit
+  // button — stop Enter from ever implicitly submitting before Calculate.
+  form.addEventListener("keydown", e => {
+    if (e.key === "Enter" && e.target.matches(".calc-hours-row input")) e.preventDefault();
+  });
 
   label.textContent = "Loading services…";
   toggle.disabled = true;
@@ -235,7 +245,10 @@ function initPricingCalculator(){
             <div class="calc-hours-row-name">${name}</div>
             <div class="calc-hours-row-rate">$${info.rate}/hr</div>
           </div>
-          <input type="number" min="1" step="1" value="${info.hours}" aria-label="Estimated hours for ${name}">
+          <div class="calc-hours-row-input-wrap">
+            <input type="number" min="1" step="1" value="${info.hours}" aria-label="Estimated hours for ${name}">
+            <span class="calc-hours-row-unit">hour(s)</span>
+          </div>
         `;
         row.querySelector("input").addEventListener("input", e => {
           info.hours = Math.max(1, parseInt(e.target.value, 10) || 1);
@@ -243,8 +256,9 @@ function initPricingCalculator(){
         hoursList.appendChild(row);
       });
 
+      if (hoursHint) hoursHint.hidden = names.length === 0;
       resultBox.hidden = true;
-      leadForm.hidden = true;
+      leadFields.hidden = true;
     }
 
     panel.innerHTML = "";
@@ -286,10 +300,11 @@ function initPricingCalculator(){
       });
 
       resultValue.textContent = formatUSD(total);
+      if (resultCaveat) resultCaveat.textContent = "This estimate may go up or down depending on the complexity and timeline of the work — let's talk it through on a call.";
       resultNote.textContent = `Ongoing maintenance for this mix runs ~${formatUSD(maintTotal)}/hr if you need it later.`;
       resultBox.hidden = false;
       if (estimateHidden) estimateHidden.value = String(Math.round(total));
-      leadForm.hidden = false;
+      leadFields.hidden = false;
 
       window.dataLayer = window.dataLayer || [];
       window.dataLayer.push({
@@ -298,7 +313,7 @@ function initPricingCalculator(){
         services_selected: [...selected.keys()]
       });
 
-      requestAnimationFrame(() => leadForm.scrollIntoView({ behavior: "smooth", block: "nearest" }));
+      requestAnimationFrame(() => leadFields.scrollIntoView({ behavior: "smooth", block: "nearest" }));
     });
   });
 }
@@ -496,9 +511,9 @@ function initReveals(){
       scrollTrigger: { trigger: el, start: "top 88%" }
     });
   });
-  gsap.from(".project-form", {
+  gsap.from("#projectForm", {
     opacity: 0, y: 30, duration: 0.8,
-    scrollTrigger: { trigger: ".project-form", start: "top 88%" }
+    scrollTrigger: { trigger: "#projectForm", start: "top 88%" }
   });
 }
 
@@ -511,7 +526,6 @@ document.addEventListener("DOMContentLoaded", () => {
   initFilters();
   initNav();
   initCursor();
-  initForm();
   initPricingCalculator();
   initHeroEntrance();
   initReveals();

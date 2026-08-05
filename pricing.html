@@ -20,7 +20,7 @@
     <img src="assets/Full_FullColor.png" alt="DigiDen">
   </a>
   <nav class="nav-links">
-    <a href="index.html#services">Services</a>
+    <a href="services.html">Services</a>
     <a href="team.html">Team</a>
     <a href="index.html#work">Work</a>
     <a href="index.html#process">Process</a>
@@ -33,7 +33,7 @@
 </header>
 
 <div class="mobile-menu" id="mobileMenu">
-  <a href="index.html#services">Services</a>
+  <a href="services.html">Services</a>
   <a href="team.html">Team</a>
   <a href="index.html#work">Work</a>
   <a href="index.html#process">Process</a>
@@ -50,7 +50,10 @@
   </section>
 
   <section class="calculator-section">
-    <div class="calculator-card">
+    <form class="calculator-card" id="projectForm">
+      <input type="hidden" name="source" value="pricing_calculator">
+      <input type="hidden" name="estimate" id="calcEstimateHidden">
+
       <div class="calc-services">
         <label>Select the services you need</label>
         <div class="calc-dropdown" id="calcDropdown">
@@ -62,6 +65,7 @@
         </div>
       </div>
 
+      <p class="calc-hours-hint" id="calcHoursHint" hidden>How many hours of work do you think each service would need? Just your best guess — we'll pin down the exact scope together on a call.</p>
       <div class="calc-hours-list" id="calcHoursList"></div>
 
       <button type="button" class="btn btn-primary calc-btn" id="calcBtn">Calculate</button>
@@ -69,32 +73,31 @@
       <div class="calc-result" id="calcResult" hidden>
         <span class="calc-result-label">Estimated Cost</span>
         <span class="calc-result-value" id="calcResultValue">$0</span>
+        <p class="calc-result-note" id="calcResultCaveat"></p>
         <p class="calc-result-note" id="calcResultNote"></p>
       </div>
-    </div>
 
-    <form class="calc-lead-form" id="calcLeadForm" hidden>
-      <input type="hidden" name="source" value="pricing_calculator">
-      <input type="hidden" name="estimate" id="calcEstimateHidden">
-      <h3>Want this in writing?</h3>
-      <p>Send us the estimate and a bit about the project — we'll follow up within 1 business day.</p>
-      <div class="form-row">
-        <label for="clName">Name</label>
-        <input type="text" id="clName" name="name" required>
+      <div class="calc-lead-fields" id="calcLeadFields" hidden>
+        <h3>Let's get on a call.</h3>
+        <p>Send us this estimate and a bit about the project — we'll set up a quick call to pin down the exact scope and timeline.</p>
+        <div class="form-row">
+          <label for="clName">Name</label>
+          <input type="text" id="clName" name="name" required>
+        </div>
+        <div class="form-row">
+          <label for="clEmail">Email</label>
+          <input type="email" id="clEmail" name="email" required>
+        </div>
+        <div class="form-row">
+          <label for="clPhone">Phone</label>
+          <input type="tel" id="clPhone" name="phone">
+        </div>
+        <div class="form-row form-row-full">
+          <label for="clMsg">What do you need built?</label>
+          <textarea id="clMsg" name="message" rows="4" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary form-submit">Send this estimate</button>
       </div>
-      <div class="form-row">
-        <label for="clEmail">Email</label>
-        <input type="email" id="clEmail" name="email" required>
-      </div>
-      <div class="form-row">
-        <label for="clPhone">Phone</label>
-        <input type="tel" id="clPhone" name="phone">
-      </div>
-      <div class="form-row form-row-full">
-        <label for="clMsg">What do you need built?</label>
-        <textarea id="clMsg" name="message" rows="4" required></textarea>
-      </div>
-      <button type="submit" class="btn btn-primary form-submit">Send this estimate</button>
     </form>
   </section>
 
@@ -106,7 +109,7 @@
       <img src="assets/Full_FullColor.png" alt="DigiDen">
     </a>
     <div class="footer-links">
-      <a href="index.html#services">Services</a>
+      <a href="services.html">Services</a>
       <a href="team.html">Team</a>
       <a href="index.html#work">Work</a>
       <a href="index.html#process">Process</a>
