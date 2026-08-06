@@ -344,18 +344,38 @@ function initBrandAssemble(){
   gsap.set(capTop, { opacity: 0, y: -16 });
   gsap.set(capBottom, { opacity: 0, y: 16 });
 
-  // The lockup is a fixed full-viewport overlay so it can bleed past the
-  // hero's own width; it must be hidden once scrolled by, restored if the
-  // user scrolls back up. Driven off live scroll progress every update
-  // (rather than onLeave/onEnterBack) so a single fast scroll that jumps
-  // clean across the whole pin range can't skip the transition and leave
-  // it stuck open over the sections below.
-  let assembleVisible = true;
-  function syncAssembleVisibility(progress){
-    const shouldShow = progress < 0.999;
-    if (shouldShow === assembleVisible) return;
-    assembleVisible = shouldShow;
-    gsap.to(assemble, { autoAlpha: shouldShow ? 1 : 0, duration: 0.3 });
+  // The lockup is a fixed full-viewport overlay (so it can bleed past the
+  // hero's own width) for as long as the hero is pinned. Once the pin's
+  // done, it needs to stop being "stuck to the screen" and instead become
+  // a normal in-flow element sitting at that exact scroll depth, so it
+  // scrolls away with the page instead of vanishing — and scrolling back
+  // up re-attaches it at that same point, right where the deform
+  // animation should resume. This used to be a fade (autoAlpha tween)
+  // timed against the pin release, but a fade is a second, independently-
+  // timed animation racing the pin's own release — on mobile, where the
+  // address bar resizing the viewport mid-scroll makes ScrollTrigger
+  // recompute pin positions, that race was visibly losing: the overlay
+  // would flash/jump before settling. Swapping position synchronously
+  // (no tween) removes the race entirely. Driven off live scroll progress
+  // every frame (rather than onLeave/onEnterBack) so a single fast scroll
+  // that jumps clean across the whole pin range can't skip the transition
+  // and leave it stuck in the wrong mode over the sections below.
+  let assembleFixed = true;
+  function syncAssemblePosition(progress){
+    const shouldBeFixed = progress < 0.999;
+    if (shouldBeFixed === assembleFixed) return;
+    assembleFixed = shouldBeFixed;
+    if (shouldBeFixed){
+      gsap.set(assemble, { clearProps: "position,top,left,right,height" });
+    } else {
+      // height must be pinned to the viewport height explicitly — without
+      // it (or a "bottom"), the absolutely-positioned box shrinks to fit
+      // its content instead of filling the screen, so align-items/
+      // justify-content center have no room to center within anymore and
+      // the lockup snaps to the top of that collapsed box instead of
+      // staying where it visually was.
+      gsap.set(assemble, { position: "absolute", top: window.scrollY, left: 0, right: 0, height: window.innerHeight });
+    }
   }
 
   const tl = gsap.timeline({
@@ -376,7 +396,7 @@ function initBrandAssemble(){
   // GSAP's ticker runs every frame regardless, so it's the one thing
   // guaranteed to catch the transition.
   const heroTrigger = tl.scrollTrigger;
-  gsap.ticker.add(() => syncAssembleVisibility(heroTrigger.progress));
+  gsap.ticker.add(() => syncAssemblePosition(heroTrigger.progress));
 
   tl.to(content, { opacity: 0, y: -40, duration: 0.3, ease: "power1.in" }, 0)
     .to(scrollCue, { opacity: 0, duration: 0.15 }, 0)
