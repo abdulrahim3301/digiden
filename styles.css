@@ -20,7 +20,10 @@
    [hidden]{display:none} at equal specificity — without this, anything
    hidden via the attribute but styled with display elsewhere stays visible. */
 [hidden]{ display: none !important; }
-html{ scroll-behavior: smooth; }
+/* overflow-x:hidden on body alone doesn't reliably contain position:fixed
+   descendants that render wider than the viewport (the brand-assemble
+   overlay, nav, mobile menu) on mobile browsers — needs to be on html too. */
+html{ scroll-behavior: smooth; overflow-x: hidden; }
 body{
   margin:0;
   background: var(--bg);
@@ -122,12 +125,17 @@ section{
   padding-top: 140px;
   position: relative;
 }
-.hero-hexfield{ position:absolute; inset:0; z-index:0; display:flex; align-items:center; justify-content:center; opacity:0.5; }
+.hero-hexfield{ position:absolute; inset:0; z-index:0; display:flex; align-items:center; justify-content:center; opacity:0.5; overflow:hidden; }
 .hero-hex-ring{ position:absolute; fill:none; stroke: var(--teal); }
 .hero-hex-ring polygon{ fill:none; }
-.hex-ring-1{ width: 320px; height:320px; stroke-width:1; opacity:0.5; }
-.hex-ring-2{ width: 480px; height:480px; stroke-width:0.6; opacity:0.3; }
-.hex-ring-3{ width: 640px; height:640px; stroke-width:0.4; opacity:0.18; }
+/* min() keeps the same fixed sizes on desktop but scales the rings down
+   together on narrow screens instead of bleeding a few hundred px past
+   the viewport edge (they'd still be visually clipped by overflow-x:hidden,
+   but relying on that alone left it up to browser-specific fixed-position
+   overflow handling instead of just not overflowing in the first place). */
+.hex-ring-1{ width: min(320px, 82vw); height: min(320px, 82vw); stroke-width:1; opacity:0.5; }
+.hex-ring-2{ width: min(480px, 123vw); height: min(480px, 123vw); stroke-width:0.6; opacity:0.3; }
+.hex-ring-3{ width: min(640px, 164vw); height: min(640px, 164vw); stroke-width:0.4; opacity:0.18; }
 .hero-hex-ring polygon{ vector-effect: non-scaling-stroke; }
 
 .hero-content{ position:relative; z-index:1; }
