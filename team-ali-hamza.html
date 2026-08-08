@@ -79,6 +79,24 @@
     </div>
   </section>
 
+  <!-- DIGITAL MARKETING PORTFOLIO — stacking scroll cards -->
+  <section class="dm-portfolio" id="dmPortfolio">
+    <div class="dm-portfolio-head">
+      <p class="section-eyebrow">Selected work</p>
+      <h2 class="section-title">Digital Marketing Portfolio</h2>
+    </div>
+    <div class="dm-stack" id="dmStack"></div>
+  </section>
+
+  <!-- PROJECT OVERLAY — populated per-card on click, see script.js -->
+  <div class="project-overlay" id="projectOverlay" aria-hidden="true">
+    <div class="project-overlay-backdrop" id="projectOverlayBackdrop"></div>
+    <div class="project-overlay-panel" id="projectOverlayPanel">
+      <button class="project-overlay-close" id="projectOverlayClose" aria-label="Close">&times;</button>
+      <div id="projectOverlayContent"></div>
+    </div>
+  </div>
+
 </main>
 
 <footer class="footer">

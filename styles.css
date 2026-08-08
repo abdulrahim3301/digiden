@@ -30,7 +30,6 @@ body{
   color: var(--white);
   font-family: var(--font-body);
   line-height: 1.5;
-  overflow-x: hidden;
 }
 img{ max-width:100%; display:block; }
 a{ color:inherit; text-decoration:none; }
@@ -571,6 +570,141 @@ section{
   .portfolio-anchor span{ font-size:11px; }
   .portfolio-logo-card{ flex-basis:170px; }
   .portfolio-filmstrip-thumb{ flex-basis:42px; height:42px; }
+}
+
+/* ============ DIGITAL MARKETING PORTFOLIO (profile page) ============
+   Pinned stacking scroll cards: each `.dm-card` is `position:sticky`
+   at the same `top` offset, stacked as plain siblings. A sticky element
+   holds its position for a scroll distance roughly equal to its own
+   height before the next sibling's turn begins — so card N rides up
+   from the bottom, sticks under the nav, and rides out again exactly
+   as card N+1 (painted after it in DOM order, so already on top with
+   no z-index needed) reaches the same sticky point and covers it. GSAP
+   scrubs a slight scale/opacity dip on each card over that same window
+   for the "settles, then eases back as the next one arrives" feel. */
+.dm-portfolio{ padding: 40px 0 60px; }
+.dm-portfolio-head{ max-width: var(--container); margin: 0 auto 32px; padding: 0 40px; }
+.dm-stack{ position: relative; padding: 0 40px; }
+.dm-card{
+  position: sticky; top: 96px;
+  height: 76vh; min-height: 460px; max-height: 640px;
+  max-width: var(--container); margin: 0 auto 28px;
+  border-radius: 24px; overflow: hidden;
+  background: var(--bg-alt); border: 1px solid var(--line);
+  display: flex; align-items: flex-end;
+  padding: 40px; transform-origin: top center;
+}
+.dm-card-glow{
+  position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(circle at var(--glow-x,75%) var(--glow-y,15%), rgba(20,240,196,0.22), transparent 60%);
+}
+.dm-card-tag{
+  position: absolute; top: 32px; left: 32px; z-index: 2;
+  background: rgba(255,255,255,0.06); border: 1px solid var(--line);
+  backdrop-filter: blur(6px); padding: 8px 16px; border-radius: 999px;
+  font-family: var(--font-mono); font-size: 12px; color: var(--text-soft);
+}
+.dm-card-body{ position: relative; z-index: 2; display: flex; align-items: flex-end; gap: 28px; }
+.dm-card-logo-chip{
+  flex: 0 0 auto; width: 110px; height: 110px; padding: 16px;
+  background: #fff; border-radius: 18px;
+  display: flex; align-items: center; justify-content: center;
+}
+.dm-card-logo-chip img{ max-width: 100%; max-height: 100%; object-fit: contain; }
+.dm-card-title{
+  font-family: var(--font-display); font-weight: 700; text-transform: uppercase;
+  letter-spacing: -0.01em; line-height: 1; color: var(--white);
+  font-size: clamp(32px, 5vw, 64px);
+}
+
+@media (max-width: 700px){
+  .dm-stack{ padding: 0 20px; }
+  .dm-card{ top: 84px; height: 68vh; min-height: 400px; padding: 24px; }
+  .dm-card-logo-chip{ width: 72px; height: 72px; padding: 10px; }
+  .dm-card-body{ gap: 16px; }
+}
+
+.dm-card{ cursor: pointer; }
+/* Floating pill that tracks the cursor over the card (JS sets x/y via
+   GSAP quickTo in initDMPortfolioStack) — pivots on its own center via
+   xPercent/yPercent so the JS only ever has to set raw cursor coords. */
+.dm-card-hover-cta{
+  position: absolute; top: 0; left: 0; z-index: 3;
+  padding: 12px 22px; border-radius: 999px;
+  background: var(--teal); color: var(--bg-alt);
+  font-family: var(--font-mono); font-size: 12px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.05em;
+  white-space: nowrap; opacity: 0; pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+.dm-card:hover .dm-card-hover-cta{ opacity: 1; }
+@media (max-width: 900px){
+  /* touch devices have no cursor to follow — a small permanent corner badge instead */
+  .dm-card-hover-cta{
+    top: auto; left: auto; bottom: 20px; right: 20px;
+    transform: none !important; opacity: 1;
+    padding: 10px 16px; font-size: 11px;
+  }
+}
+
+/* ============ PROJECT OVERLAY ============
+   Click-through detail view for a portfolio card. Fixed, centered,
+   sized well below the viewport so it reads as an overlay on top of
+   the page rather than a new page — panel: 1100×760 desktop, capped
+   to 92vw/88vh on anything smaller so it never touches the edges. */
+.project-overlay{
+  position: fixed; inset: 0; z-index: 500;
+  display: none; align-items: center; justify-content: center;
+  padding: 40px;
+}
+.project-overlay.open{ display: flex; }
+.project-overlay-backdrop{
+  position: absolute; inset: 0;
+  background: rgba(8,15,23,0.78); backdrop-filter: blur(6px);
+}
+.project-overlay-panel{
+  position: relative; width: min(1100px, 92vw); height: min(760px, 88vh);
+  background: var(--bg-alt); border: 1px solid var(--line); border-radius: 20px;
+  overflow-y: auto; box-shadow: 0 50px 120px rgba(0,0,0,0.55);
+  padding: 64px 48px 56px;
+}
+.project-overlay-close{
+  position: absolute; top: 20px; right: 20px; z-index: 2;
+  width: 40px; height: 40px; border-radius: 50%;
+  background: rgba(255,255,255,0.06); border: 1px solid var(--line);
+  color: var(--white); font-size: 20px; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: background 0.2s, transform 0.2s;
+}
+.project-overlay-close:hover{ background: rgba(255,255,255,0.14); transform: rotate(90deg); }
+.project-overlay-head{ display: flex; align-items: flex-end; gap: 24px; margin-bottom: 24px; }
+.project-overlay-logo{
+  flex: 0 0 auto; width: 84px; height: 84px; padding: 14px;
+  background: #fff; border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+}
+.project-overlay-logo img{ max-width: 100%; max-height: 100%; object-fit: contain; }
+.project-overlay-title{
+  font-family: var(--font-display); font-weight: 700; text-transform: uppercase;
+  color: var(--white); font-size: clamp(26px, 4vw, 40px);
+}
+.project-overlay-tag{
+  display: inline-block; margin-bottom: 24px;
+  background: rgba(255,255,255,0.06); border: 1px solid var(--line);
+  padding: 8px 16px; border-radius: 999px;
+  font-family: var(--font-mono); font-size: 12px; color: var(--text-soft);
+}
+.project-overlay-desc{ color: var(--text-soft); font-size: 16px; line-height: 1.7; max-width: 720px; margin-bottom: 32px; }
+.project-overlay-shots{ display: flex; flex-direction: column; gap: 20px; }
+.project-overlay-shots img{ width: 100%; border-radius: 14px; border: 1px solid var(--line); }
+.project-overlay-shots-empty{
+  border: 1px dashed var(--line); border-radius: 14px; padding: 40px;
+  text-align: center; color: var(--text-faint); font-family: var(--font-mono); font-size: 13px;
+}
+@media (max-width: 700px){
+  .project-overlay{ padding: 16px; }
+  .project-overlay-panel{ width: 100%; height: 100%; padding: 56px 24px 32px; border-radius: 16px; }
+  .project-overlay-head{ flex-direction: column; align-items: flex-start; gap: 14px; }
 }
 
 /* ============ CTA / CONTACT ============ */

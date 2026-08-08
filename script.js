@@ -506,7 +506,7 @@ function initPortfolioStrip(){
 
   gsap.registerPlugin(ScrollTrigger);
 
-  const logoPath = name => `assets/team/AR-Portfolio/${name}.png`;
+  const logoPath = name => `assets/team/AR-Portfolio/BrandDesignPortfolio/${name}.png`;
   const buildCard = (name, className) => {
     const card = document.createElement("div");
     card.className = className;
@@ -618,6 +618,144 @@ function initPortfolioStrip(){
 }
 
 /* ============================================================
+   DIGITAL MARKETING PORTFOLIO DATA — MVP placeholder cards built
+   from the logo marks in AR-Portfolio/DigitalMarketingPortfolio.
+   Real card art comes later; swap `tag` copy per project once
+   that's written, no structural changes needed.
+   ============================================================ */
+const DM_PORTFOLIO = [
+  { name: "E-Rozgaar", logo: "E-Rozgaar", tag: "Punjab Government Digital Initiative",
+    description: "Digital campaign and growth work on E-Rozgaar, a Punjab Government initiative connecting job seekers with employers.", screenshots: [] },
+  { name: "GITCP", logo: "GITCP", tag: "Punjab Government Digital Initiative",
+    description: "Digital campaign and growth work on GITCP (Global IT Certifications), a Punjab Government digital-skills initiative.", screenshots: [] },
+  { name: "SheWins", logo: "SheWins", tag: "Punjab Government Digital Initiative",
+    description: "Digital campaign and growth work on SheWins, a Punjab Government initiative supporting women's participation in the digital economy.", screenshots: [] },
+  { name: "THSS", logo: "THSS", tag: "Punjab Government Digital Initiative",
+    description: "Digital campaign and growth work on THSS, a Punjab Government digital initiative.", screenshots: [] }
+];
+
+/* ============================================================
+   PROJECT OVERLAY — click-through detail view for a portfolio
+   card. One overlay per page, populated per project on open. Shows
+   a placeholder until a project's `screenshots` array has real
+   images in it — drop paths in and they render full-width, stacked,
+   no other changes needed. No-op on pages without the markup.
+   ============================================================ */
+function initProjectOverlay(){
+  const overlay = document.getElementById("projectOverlay");
+  if (!overlay) return null;
+
+  const content = document.getElementById("projectOverlayContent");
+  const closeBtn = document.getElementById("projectOverlayClose");
+  const backdrop = document.getElementById("projectOverlayBackdrop");
+
+  function open(item){
+    content.innerHTML = `
+      <div class="project-overlay-head">
+        <div class="project-overlay-logo"><img src="${item.logoSrc}" alt="${item.name}"></div>
+        <h2 class="project-overlay-title">${item.name}</h2>
+      </div>
+      <span class="project-overlay-tag">${item.tag}</span>
+      <p class="project-overlay-desc">${item.description || ""}</p>
+      <div class="project-overlay-shots">
+        ${
+          item.screenshots && item.screenshots.length
+            ? item.screenshots.map(src => `<img src="${src}" alt="${item.name} — campaign result">`).join("")
+            : `<div class="project-overlay-shots-empty">Full campaign screenshots coming soon</div>`
+        }
+      </div>
+    `;
+    overlay.classList.add("open");
+    overlay.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+  }
+  function close(){
+    overlay.classList.remove("open");
+    overlay.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+  }
+
+  closeBtn.addEventListener("click", close);
+  backdrop.addEventListener("click", close);
+  document.addEventListener("keydown", e => { if (e.key === "Escape") close(); });
+
+  return { open, close };
+}
+
+/* ============================================================
+   DIGITAL MARKETING PORTFOLIO — pinned stacking scroll cards.
+   Each card is `position:sticky` at the same `top` offset (CSS),
+   so once it locks it fully covers whatever's beneath it. The pile
+   look comes from GSAP: each card (but the first) starts a little
+   below its resting spot — while it's still scrolling up into view,
+   the card it's about to cover is visible peeking out above it —
+   and both animations are scrubbed across that SAME entrance window
+   (card sliding the last bit up to rest, previous card shrinking/
+   dimming to recede), so the cover reads as one settling onto the
+   last rather than a hard cut. Reverse-scroll un-stacks for free,
+   since it's all just scroll-position-driven. Each card opens the
+   project overlay on click. Individual team pages only; no-op
+   elsewhere.
+   ============================================================ */
+function initDMPortfolioStack(){
+  const stack = document.getElementById("dmStack");
+  if (!stack) return;
+
+  gsap.registerPlugin(ScrollTrigger);
+  const overlay = initProjectOverlay();
+
+  stack.innerHTML = "";
+  DM_PORTFOLIO.forEach((item, i) => {
+    const logoSrc = `assets/team/AR-Portfolio/DigitalMarketingPortfolio/${item.logo}.png`;
+    const card = document.createElement("article");
+    card.className = "dm-card";
+    card.style.setProperty("--glow-x", i % 2 === 0 ? "75%" : "20%");
+    card.style.setProperty("--glow-y", i % 2 === 0 ? "15%" : "80%");
+    card.innerHTML = `
+      <div class="dm-card-glow"></div>
+      <span class="dm-card-tag">${item.tag}</span>
+      <div class="dm-card-body">
+        <div class="dm-card-logo-chip"><img src="${logoSrc}" alt="${item.name}" loading="lazy"></div>
+        <h3 class="dm-card-title">${item.name}</h3>
+      </div>
+      <span class="dm-card-hover-cta">Click to view project ↗</span>
+    `;
+    if (overlay) card.addEventListener("click", () => overlay.open({ ...item, logoSrc }));
+    stack.appendChild(card);
+  });
+
+  const cards = stack.querySelectorAll(".dm-card");
+  const PEEK = 80;
+
+  cards.forEach((card, i) => {
+    if (i === 0) return;
+    const entrance = { trigger: card, start: "top bottom", end: "top top+=96", scrub: true };
+    gsap.fromTo(card, { y: PEEK }, { y: 0, ease: "none", scrollTrigger: entrance });
+    gsap.to(cards[i - 1], { scale: 0.94, opacity: 0.65, ease: "none", scrollTrigger: entrance });
+  });
+
+  // Hover pill flies with the cursor instead of sitting fixed in the
+  // card's center — pivoted on its own middle (xPercent/yPercent) so the
+  // quickTo calls only ever need raw cursor coordinates relative to the
+  // card. Desktop only; touch devices fall back to a static corner badge
+  // via CSS (no pointer to track).
+  if (window.matchMedia("(min-width: 900px)").matches){
+    cards.forEach(card => {
+      const cta = card.querySelector(".dm-card-hover-cta");
+      if (!cta) return;
+      gsap.set(cta, { xPercent: -50, yPercent: -50, rotate: -6 });
+      const moveX = gsap.quickTo(cta, "x", { duration: 0.35, ease: "power3" });
+      const moveY = gsap.quickTo(cta, "y", { duration: 0.35, ease: "power3" });
+      card.addEventListener("mousemove", e => {
+        const r = card.getBoundingClientRect();
+        moveX(e.clientX - r.left);
+        moveY(e.clientY - r.top);
+      });
+    });
+  }
+}
+
+/* ============================================================
    SERVICE DOMAIN DETAIL — the illustrative example cards tilt
    toward the cursor. Desktop only; no-ops everywhere else.
    ============================================================ */
@@ -700,5 +838,6 @@ document.addEventListener("DOMContentLoaded", () => {
     initBrandAssemble();
     initProfileFrame();
     initPortfolioStrip();
+    initDMPortfolioStack();
   }));
 });
