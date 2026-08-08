@@ -715,6 +715,61 @@ section{
 .viz-kpi-num{ font-family: var(--font-display); font-weight:700; font-size: 18px; color: var(--teal); }
 .viz-kpi-label{ font-family: var(--font-mono); font-size: 9px; color: var(--text-faint); text-transform:uppercase; margin-top:2px; }
 
+/* responsive device silhouettes */
+.viz-devices{ display:flex; align-items:flex-end; gap: 10px; }
+.viz-device{ background: rgba(255,255,255,0.05); border: 1px solid var(--line); border-radius: 6px; }
+.viz-device.phone{ width: 26px; height: 50px; border-radius: 8px; }
+.viz-device.tablet{ width: 44px; height: 60px; }
+.viz-device.desktop{ width: 80px; height: 52px; }
+
+/* lead form fields + button */
+.viz-form{ display:flex; flex-direction:column; gap: 8px; width: 120px; }
+.viz-form-field{ height: 16px; border-radius: 5px; background: rgba(255,255,255,0.05); border: 1px solid var(--line); }
+.viz-form-btn{ height: 20px; border-radius: 999px; background: var(--teal); margin-top: 4px; }
+
+/* chat bubble conversation */
+.viz-chat{ display:flex; flex-direction:column; gap: 8px; width: 130px; }
+.viz-chat-bubble{ padding: 7px 11px; border-radius: 12px; font-size: 0; max-width: 80%; }
+.viz-chat-bubble.bot{ background: rgba(255,255,255,0.08); border-bottom-left-radius: 2px; align-self:flex-start; }
+.viz-chat-bubble.user{ background: var(--teal); border-bottom-right-radius: 2px; align-self:flex-end; }
+.viz-chat-bubble span{ display:block; height: 5px; width: 46px; border-radius: 3px; background: rgba(255,255,255,0.35); }
+.viz-chat-bubble.user span{ background: rgba(19,39,58,0.5); }
+
+/* connected-node integration diagram */
+.viz-nodes{ width: 130px; height: 100px; }
+
+/* narrowing funnel stages */
+.viz-funnel{ display:flex; flex-direction:column; align-items:center; gap: 4px; }
+.viz-funnel-stage{ height: 18px; border-radius: 4px; background: linear-gradient(90deg,#14f0c4,#14bea2); }
+
+/* SVG trend line */
+.viz-line-chart{ width: 140px; height: 80px; }
+.viz-line-chart path{ fill:none; stroke: var(--teal); stroke-width: 2; }
+.viz-line-chart .area{ fill: rgba(20,240,196,0.12); stroke:none; }
+
+/* platform / payment icon badges */
+.viz-badges{ display:flex; gap: 10px; }
+.viz-badge{
+  width: 34px; height: 34px; border-radius: 50%;
+  background: rgba(255,255,255,0.06); border: 1px solid var(--line);
+  display:flex; align-items:center; justify-content:center;
+  font-family: var(--font-mono); font-size: 10px; color: var(--text-soft);
+}
+
+/* mini week calendar grid */
+.viz-calendar{ display:grid; grid-template-columns: repeat(7, 1fr); gap: 5px; width: 140px; }
+.viz-calendar-cell{ aspect-ratio: 1; border-radius: 3px; background: rgba(255,255,255,0.05); }
+.viz-calendar-cell.active{ background: var(--teal); }
+
+/* vertical short-form video frame */
+.viz-reel{ width: 66px; height: 120px; border-radius: 10px; border: 2px solid var(--line); overflow:hidden; position:relative; background: rgba(255,255,255,0.03); }
+.viz-reel::before{ content:""; position:absolute; inset:0; background: linear-gradient(160deg,#14bea2,#13273a); opacity:0.6; }
+.viz-reel-bar{ position:absolute; left:8px; right:8px; bottom:10px; height:4px; border-radius:2px; background: rgba(255,255,255,0.6); }
+
+/* keyword / content-type tag cloud (reuses company-chip's look at a smaller scale) */
+.viz-tags{ display:flex; flex-wrap:wrap; gap: 6px; width: 150px; justify-content:center; }
+.viz-tag{ font-family: var(--font-mono); font-size: 10px; color: var(--text-soft); border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; }
+
 @media (max-width: 700px){
   .domain-example-grid{ grid-template-columns: 1fr; }
 }
