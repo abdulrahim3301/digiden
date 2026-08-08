@@ -473,17 +473,68 @@ function initProfileFrame(){
 }
 
 /* ============================================================
+   PORTFOLIO STRIP DATA — Abdul Rahim's brand design portfolio.
+   Filenames match assets/team/AR-Portfolio/<name>.png exactly —
+   add or remove a logo by editing this list, no HTML changes needed.
+   ============================================================ */
+const AR_PORTFOLIO_LOGOS = [
+  "AKIMEY", "ARA Visuals", "ASquad", "Allround", "Annas Herz", "BOT 2", "Baro", "Barz",
+  "Bay Brownie", "BluOrange Travels", "Bortal", "Bubble Bros", "ButseKu", "ByeNic",
+  "CMITIP", "CW", "Cactus", "Chinese", "Data2AI", "DezignersDen", "DigiDen", "Digital Hunar",
+  "DronZilla", "DronezWala", "ECommercePunjab", "EarthCureLife", "GITCP", "GreenStar",
+  "GripGlo", "Hotel Rubhenshof", "HotelSchilberg", "Hummerge", "IMC", "Innowend",
+  "MakerSpace Punjab 2", "MakerSpace Punjab", "NextNova", "NueroNet", "OEC", "PKIChain",
+  "PowerCloud", "ROC", "Recurved", "RenderHunt", "SRSCare", "SandyFin", "SizzlySeries",
+  "SolChat", "StitchbyStitch", "TheGauntlet", "Transper", "TwinCiti", "VIC Talks", "WFS",
+  "WendLendt Group", "YouthUpSkill", "Zenith"
+];
+
+/* ============================================================
    PORTFOLIO STRIP — gradient anchor card flips in from the right,
-   the logo strip unfurls left-to-right, then autoscrolls continuously.
-   Individual team pages only; no-op everywhere else.
+   the logo strip unfurls left-to-right, then autoscrolls continuously
+   behind it. A filmstrip of thumbnails below lets a visitor scrub or
+   swipe through the same set directly. Individual team pages only;
+   no-op everywhere else.
    ============================================================ */
 function initPortfolioStrip(){
   const section = document.getElementById("portfolioStrip");
   const anchor = document.getElementById("portfolioAnchor");
   const wrap = document.getElementById("portfolioScrollWrap");
-  if (!section || !anchor || !wrap) return;
+  const track = document.getElementById("portfolioScrollTrack");
+  const filmTrack = document.getElementById("portfolioFilmstripTrack");
+  if (!section || !anchor || !wrap || !track) return;
 
   gsap.registerPlugin(ScrollTrigger);
+
+  const logoPath = name => `assets/team/AR-Portfolio/${name}.png`;
+  const buildCard = (name, className) => {
+    const card = document.createElement("div");
+    card.className = className;
+    const img = document.createElement("img");
+    img.src = logoPath(name);
+    img.alt = name;
+    img.loading = "lazy";
+    card.appendChild(img);
+    return card;
+  };
+
+  // Two identical copies back to back so the loop has something to land
+  // on; the filmstrip below only needs one copy since it's just a
+  // scrub control, not something that scrolls on its own.
+  track.innerHTML = "";
+  AR_PORTFOLIO_LOGOS.concat(AR_PORTFOLIO_LOGOS).forEach(name => {
+    track.appendChild(buildCard(name, "portfolio-logo-card"));
+  });
+
+  let thumbs = [];
+  if (filmTrack){
+    filmTrack.innerHTML = "";
+    thumbs = AR_PORTFOLIO_LOGOS.map(name => {
+      const thumb = buildCard(name, "portfolio-filmstrip-thumb");
+      filmTrack.appendChild(thumb);
+      return thumb;
+    });
+  }
 
   gsap.set(anchor, { opacity: 0, x: 80, rotateY: 60, transformPerspective: 800 });
   gsap.set(wrap, { clipPath: "inset(0 100% 0 0)" });
@@ -493,6 +544,77 @@ function initPortfolioStrip(){
   })
     .to(anchor, { opacity: 1, x: 0, rotateY: 0, duration: 0.6, ease: "power2.out" })
     .to(wrap, { clipPath: "inset(0 0% 0 0)", duration: 0.9, ease: "power2.inOut" }, "-=0.2");
+
+  // Exact pixel distance to the second copy's first card. CSS's old
+  // translateX(-50%) trick assumed the two halves were exactly half the
+  // track's total width, but flex `gap` only appears *between* cards —
+  // it doesn't split evenly across a doubled row — so that was always
+  // off by a fraction of a gap and visibly jumped every time the loop
+  // restarted. Measuring the real DOM offset instead guarantees an
+  // exact match, whatever the card count or sizing.
+  function measureLoopWidth(){
+    const n = AR_PORTFOLIO_LOGOS.length;
+    const cards = track.children;
+    if (cards.length < n + 1) return 0;
+    return cards[n].offsetLeft - cards[0].offsetLeft;
+  }
+
+  let loopWidth = measureLoopWidth();
+  const SECONDS_PER_LOGO = 2.6;
+  const scrollTween = gsap.to(track, {
+    x: () => -loopWidth,
+    duration: AR_PORTFOLIO_LOGOS.length * SECONDS_PER_LOGO,
+    ease: "none",
+    repeat: -1
+  });
+
+  window.addEventListener("resize", () => {
+    const fresh = measureLoopWidth();
+    if (fresh){ loopWidth = fresh; scrollTween.invalidate(); }
+  });
+
+  function setActiveThumb(progress){
+    if (!thumbs.length) return;
+    const idx = Math.floor(progress * AR_PORTFOLIO_LOGOS.length) % AR_PORTFOLIO_LOGOS.length;
+    thumbs.forEach((t, i) => t.classList.toggle("active", i === idx));
+  }
+  scrollTween.eventCallback("onUpdate", () => setActiveThumb(scrollTween.progress()));
+
+  if (filmTrack){
+    let resumeTimer = null;
+    const pauseForUser = () => { scrollTween.pause(); clearTimeout(resumeTimer); };
+    const scheduleResume = () => {
+      clearTimeout(resumeTimer);
+      resumeTimer = setTimeout(() => scrollTween.play(), 1200);
+    };
+
+    // Native touch/trackpad scrolling on the filmstrip itself drives the
+    // main carousel directly — swipe the thumbnails, the big cards follow.
+    filmTrack.addEventListener("scroll", () => {
+      pauseForUser();
+      const maxScroll = filmTrack.scrollWidth - filmTrack.clientWidth;
+      const progress = maxScroll > 0 ? filmTrack.scrollLeft / maxScroll : 0;
+      scrollTween.progress(progress);
+      setActiveThumb(progress);
+      scheduleResume();
+    }, { passive: true });
+
+    thumbs.forEach((thumb, i) => {
+      thumb.addEventListener("click", () => {
+        pauseForUser();
+        const target = i / AR_PORTFOLIO_LOGOS.length;
+        gsap.to(scrollTween, {
+          progress: target, duration: 0.6, ease: "power2.out",
+          onUpdate: () => setActiveThumb(scrollTween.progress())
+        });
+        filmTrack.scrollTo({
+          left: thumb.offsetLeft - filmTrack.clientWidth / 2 + thumb.offsetWidth / 2,
+          behavior: "smooth"
+        });
+        scheduleResume();
+      });
+    });
+  }
 }
 
 /* ============================================================

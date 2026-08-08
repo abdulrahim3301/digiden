@@ -509,10 +509,17 @@ section{
 @keyframes marquee{ from{ transform: translateX(0); } to{ transform: translateX(-50%); } }
 
 /* ============ PORTFOLIO STRIP (profile page) ============
-   A gradient "PORTFOLIO" anchor card flips in from the right, then the
-   logo strip unfurls left-to-right (clip-path reveal) like an accordion.
-   The logo cards autoscroll continuously behind the anchor, which stays
-   fixed in place. */
+   A gradient anchor card flips in from the right, then the logo strip
+   unfurls left-to-right (clip-path reveal) like an accordion. The logo
+   cards autoscroll continuously behind the anchor, which stays fixed in
+   place. Scroll position is driven by GSAP (script.js), not a CSS
+   @keyframes translateX(-50%) loop — with real, variable-count content
+   and a flex `gap`, the halfway point of the doubled track is never
+   exactly 50% of its total width (gap only appears *between* cards, so
+   it doesn't split evenly across a duplicated row), which showed up as
+   a visible jump every time the loop restarted. GSAP instead measures
+   the actual pixel offset to the second copy and animates to that exact
+   value, so the restart is seamless regardless of card count/sizing. */
 .portfolio-strip{ padding: 0 0 60px; }
 .portfolio-strip-inner{
   display:flex; align-items:stretch; height: 380px;
@@ -527,32 +534,43 @@ section{
 }
 .portfolio-anchor span{
   writing-mode: vertical-rl; transform: rotate(180deg);
-  font-family: var(--font-display); font-weight:700; letter-spacing:0.2em;
-  font-size: 22px; color: var(--white); text-transform:uppercase;
+  font-family: var(--font-display); font-weight:700; letter-spacing:0.08em;
+  font-size: 15px; color: var(--white); text-transform:uppercase;
+  white-space:nowrap;
 }
 .portfolio-scroll-wrap{ flex:1; overflow:hidden; position:relative; }
-.portfolio-scroll-track{
-  display:flex; gap:20px; height:100%; width:max-content;
-  padding: 0 20px;
-  animation: portfolioScroll 18s linear infinite;
-}
+.portfolio-scroll-track{ display:flex; gap:20px; height:100%; width:max-content; }
 .portfolio-logo-card{
   flex: 0 0 240px; height:100%;
   background: var(--bg-alt); border:1px solid var(--line); border-radius:16px;
-  display:flex; align-items:center; justify-content:center;
-  text-align:center; padding: 20px;
+  overflow:hidden;
 }
-.portfolio-logo-card span{
-  font-family: var(--font-display); font-weight:700; font-size:20px; color: var(--text-soft);
+.portfolio-logo-card img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+/* -- filmstrip scrubber -- */
+.portfolio-filmstrip{ margin-top: 16px; }
+.portfolio-filmstrip-track{
+  display:flex; gap: 8px; overflow-x:auto; scroll-snap-type: x proximity;
+  padding-bottom: 6px; cursor: grab; -webkit-overflow-scrolling: touch;
 }
-@keyframes portfolioScroll{ from{ transform: translateX(0); } to{ transform: translateX(-50%); } }
+.portfolio-filmstrip-track:active{ cursor: grabbing; }
+.portfolio-filmstrip-track::-webkit-scrollbar{ height: 4px; }
+.portfolio-filmstrip-track::-webkit-scrollbar-thumb{ background: var(--line); border-radius: 999px; }
+.portfolio-filmstrip-thumb{
+  flex: 0 0 52px; height: 52px; border-radius: 8px; overflow:hidden;
+  border: 1px solid var(--line); opacity:0.5; cursor:pointer;
+  transition: opacity .2s, border-color .2s;
+  scroll-snap-align: start;
+}
+.portfolio-filmstrip-thumb img{ width:100%; height:100%; object-fit:cover; display:block; pointer-events:none; }
+.portfolio-filmstrip-thumb.active{ opacity:1; border-color: var(--teal); }
 
 @media (max-width: 700px){
   .portfolio-strip-inner{ height:280px; }
   .portfolio-anchor{ flex-basis:110px; }
-  .portfolio-anchor span{ font-size:15px; }
+  .portfolio-anchor span{ font-size:11px; }
   .portfolio-logo-card{ flex-basis:170px; }
-  .portfolio-logo-card span{ font-size:16px; }
+  .portfolio-filmstrip-thumb{ flex-basis:42px; height:42px; }
 }
 
 /* ============ CTA / CONTACT ============ */
