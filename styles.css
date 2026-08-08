@@ -576,12 +576,44 @@ section{
 .form-submit{ grid-column: 1/-1; justify-self:flex-start; margin-top: 6px; border:none; }
 
 /* ============ SERVICES (dedicated page) ============ */
-.services-hero{ padding-top: 180px; padding-bottom: 20px; max-width: 720px; }
+/* .services-hero is a <section>, so it inherits max-width:1180px;margin:0
+   auto from the base rule — that's what has to stay, so its left edge
+   lines up with the (also 1180px, auto-centered) .service-domain sections
+   below it. The narrower 720px reading-width lives on an inner wrapper
+   instead of the section itself; putting max-width:720px on the section
+   directly made IT (not just its text) a narrower, separately-centered
+   box, so on wide screens it visibly sat shifted toward the middle
+   instead of lining up with the body content underneath. */
+.services-hero{ padding-top: 180px; padding-bottom: 20px; }
+.services-hero-inner{ max-width: 720px; }
 .services-hero .section-desc{ max-width: 100%; }
 .services-hero .section-desc a{ color: var(--teal); }
 .services-hero .section-desc a:hover{ color: var(--white); }
 
 .service-domain-head{ max-width: 640px; margin-bottom: 40px; }
+/* The domain name (in .section-eyebrow) is what should read as the heading
+   here — the tagline (in .section-title) is supporting text underneath it,
+   not the headline. Swaps just the font/color treatment between the two,
+   scoped to this section so the shared .section-eyebrow/.section-title
+   classes elsewhere on the site are untouched. */
+.service-domain-head .section-eyebrow{
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 700;
+  color: var(--white);
+  text-transform: none;
+  letter-spacing: normal;
+  margin-bottom: 10px;
+}
+.service-domain-head .section-title{
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--teal);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 0;
+}
 .service-sub-grid{ display:flex; flex-direction:column; gap: 20px; }
 .service-sub-card{
   background: rgba(255,255,255,0.03);
@@ -593,9 +625,98 @@ section{
 .service-sub-desc{ color: var(--text-soft); font-size: 15px; margin-bottom: 18px; max-width: 620px; }
 .service-deliverables{ display:flex; flex-wrap:wrap; gap: 8px; }
 .service-domain-cta{ margin-top: 40px; border:none; }
+.service-domain-cta-row{ display:flex; gap: 14px; flex-wrap:wrap; margin-top: 40px; }
 
 @media (max-width: 600px){
   .service-sub-card{ padding: 24px; }
+}
+
+/* ============ SERVICE DOMAIN DETAIL PAGE ============ */
+.domain-detail-hero{ padding-top: 180px; padding-bottom: 20px; }
+.domain-detail-hero-inner{ max-width: 720px; }
+.domain-detail-hero .profile-back{ margin-bottom: 24px; display:inline-block; }
+/* Same swap as .service-domain-head on services.html: the domain name
+   (eyebrow) is what should read as the heading — the tagline (title) is
+   supporting text underneath it, not the headline. */
+.domain-detail-eyebrow{
+  font-family: var(--font-display); font-weight:700; color: var(--white);
+  text-transform:none; letter-spacing: normal;
+  font-size: clamp(28px, 4vw, 40px); margin-bottom: 12px; display:block;
+}
+.domain-detail-title{
+  font-family: var(--font-mono); font-weight:400; color: var(--teal);
+  text-transform: uppercase; letter-spacing: 0.12em;
+  font-size: 13px; margin-bottom: 20px;
+}
+.domain-detail-intro{ color: var(--text-soft); font-size: 18px; max-width: 640px; }
+
+.domain-sub-detail{ border-top: 1px solid var(--line); padding-top: 60px; padding-bottom: 20px; }
+.domain-sub-head{ max-width: 700px; margin-bottom: 36px; }
+.domain-sub-head h2{ font-size: clamp(26px, 3.4vw, 36px); margin-bottom: 12px; }
+.domain-sub-head p{ color: var(--text-soft); font-size: 16px; margin-bottom: 20px; }
+
+.domain-example-grid{ display:grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+.domain-example-card{
+  background: rgba(255,255,255,0.03); border: 1px solid var(--line); border-radius: 20px;
+  padding: 28px; transition: border-color .3s, background .3s;
+}
+.domain-example-card:hover{ border-color: rgba(20,240,196,0.4); background: rgba(255,255,255,0.05); }
+.domain-example-visual{
+  height: 160px; border-radius: 14px; margin-bottom: 18px;
+  background: rgba(255,255,255,0.02); border: 1px solid var(--line);
+  display:flex; align-items:center; justify-content:center; overflow:hidden;
+  transform-style: preserve-3d; will-change: transform;
+}
+.domain-example-label{ font-family: var(--font-mono); font-size: 13px; color: var(--text-soft); text-transform:uppercase; letter-spacing: 0.06em; }
+
+.domain-final-cta{ text-align:center; padding: 100px 32px; }
+.domain-final-cta h2{ font-family: var(--font-display); font-weight:700; font-size: clamp(28px, 4.2vw, 42px); margin-bottom: 26px; }
+
+/* -- illustrative mini-visuals used inside .domain-example-visual -- */
+.viz-logos{ display:flex; gap: 14px; align-items:center; }
+.viz-logo-hex{ width: 44px; height:44px; clip-path: var(--hex-clip); }
+.viz-logo-hex.v1{ background: linear-gradient(135deg,#14f0c4,#0e6e5c); }
+.viz-logo-hex.v2{ background: linear-gradient(135deg,#14bea2,#13273a); width:56px; height:56px; }
+.viz-logo-hex.v3{ background: transparent; border: 2px solid var(--teal); }
+
+.viz-guidelines{ display:flex; gap: 18px; align-items:center; }
+.viz-swatches{ display:flex; flex-direction:column; gap: 6px; }
+.viz-swatch{ width: 28px; height: 20px; border-radius: 4px; }
+.viz-type-scale{ display:flex; flex-direction:column; gap: 10px; justify-content:center; }
+.viz-type-bar{ height: 6px; border-radius: 3px; background: rgba(255,255,255,0.2); }
+
+.viz-social-grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 6px; width: 120px; }
+.viz-social-cell{ aspect-ratio: 1; border-radius: 4px; }
+
+.viz-frame{ width: 140px; border-radius: 8px; border: 2px solid var(--line); overflow:hidden; }
+.viz-frame-bar{ height: 16px; background: rgba(255,255,255,0.06); display:flex; align-items:center; gap: 4px; padding: 0 6px; }
+.viz-frame-dot{ width: 5px; height: 5px; border-radius: 50%; background: var(--text-faint); display:inline-block; }
+.viz-frame-body{ padding: 12px; display:flex; flex-direction:column; gap: 7px; }
+.viz-frame-line{ height: 5px; border-radius: 3px; background: rgba(255,255,255,0.12); }
+
+.viz-bars{ display:flex; align-items:flex-end; gap: 12px; height: 100px; }
+.viz-bar-pair{ display:flex; align-items:flex-end; gap: 3px; }
+.viz-bar{ width: 10px; border-radius: 3px 3px 0 0; }
+.viz-bar.you{ background: var(--teal); }
+.viz-bar.them{ background: rgba(255,255,255,0.15); }
+
+.viz-quadrant{ position:relative; width: 120px; height: 120px; }
+.viz-quadrant::before, .viz-quadrant::after{ content:""; position:absolute; background: var(--line); }
+.viz-quadrant::before{ left:50%; top:0; bottom:0; width:1px; }
+.viz-quadrant::after{ top:50%; left:0; right:0; height:1px; }
+.viz-dot{ position:absolute; width:8px; height:8px; border-radius:50%; background: var(--teal); transform: translate(-50%,-50%); }
+
+.viz-roadmap{ display:flex; align-items:center; width:100%; padding: 0 16px; }
+.viz-roadmap-line{ flex:1; height:1px; background: var(--line); }
+.viz-roadmap-dot{ width:10px; height:10px; border-radius:50%; background: var(--teal); border:2px solid var(--bg-alt); flex-shrink:0; }
+
+.viz-kpis{ display:flex; gap: 10px; }
+.viz-kpi-tile{ background: rgba(255,255,255,0.04); border-radius: 10px; padding: 12px 14px; text-align:center; min-width: 60px; }
+.viz-kpi-num{ font-family: var(--font-display); font-weight:700; font-size: 18px; color: var(--teal); }
+.viz-kpi-label{ font-family: var(--font-mono); font-size: 9px; color: var(--text-faint); text-transform:uppercase; margin-top:2px; }
+
+@media (max-width: 700px){
+  .domain-example-grid{ grid-template-columns: 1fr; }
 }
 
 /* ============ PRICING CALCULATOR ============ */

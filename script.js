@@ -496,6 +496,28 @@ function initPortfolioStrip(){
 }
 
 /* ============================================================
+   SERVICE DOMAIN DETAIL — the illustrative example cards tilt
+   toward the cursor. Desktop only; no-ops everywhere else.
+   ============================================================ */
+function initDomainExamples(){
+  const cards = document.querySelectorAll(".domain-example-visual");
+  if (!cards.length) return;
+  if (!window.matchMedia("(min-width: 900px)").matches) return;
+
+  cards.forEach(card => {
+    card.addEventListener("mousemove", e => {
+      const r = card.getBoundingClientRect();
+      const nx = (e.clientX - r.left - r.width / 2) / (r.width / 2);
+      const ny = (e.clientY - r.top - r.height / 2) / (r.height / 2);
+      gsap.to(card, { rotateY: nx * 12, rotateX: -ny * 12, duration: 0.4, ease: "power2.out" });
+    });
+    card.addEventListener("mouseleave", () => {
+      gsap.to(card, { rotateY: 0, rotateX: 0, duration: 0.5, ease: "power2.out" });
+    });
+  });
+}
+
+/* ============================================================
    HERO ENTRANCE
    ============================================================ */
 function initHeroEntrance(){
@@ -549,6 +571,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initPricingCalculator();
   initHeroEntrance();
   initReveals();
+  initDomainExamples();
 
   // Give layout a tick to settle before measuring positions
   requestAnimationFrame(() => requestAnimationFrame(() => {
