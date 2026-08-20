@@ -424,6 +424,8 @@ function initProfileFrame(){
   const main = document.getElementById("frameMain");
   const cutout = document.getElementById("frameCutout");
   const content = document.getElementById("frameHeroContent");
+  const heading = document.getElementById("frameHeroHeading");
+  const bio = document.getElementById("frameHeroBio");
   if (!hero || !stack || !main) return;
   if (!window.matchMedia("(min-width: 900px)").matches) return;
 
@@ -446,6 +448,8 @@ function initProfileFrame(){
     if (cutout) gsap.to(cutout, { x: 0, y: 0, duration: 0.6, ease: "power2.out" });
   });
 
+  if (bio) gsap.set(bio, { opacity: 0, y: 40 });
+
   const tl = gsap.timeline({
     scrollTrigger: {
       trigger: hero,
@@ -456,8 +460,17 @@ function initProfileFrame(){
     }
   });
 
+  // The heading slides down (not fades out) as the frame grows, so it
+  // lands in place on the gradient instead of vanishing. Animating the
+  // shared wrapper (not the heading alone) is what actually moves the
+  // heading — a transform on the heading by itself wouldn't carry its
+  // normal-flow sibling (the bio) down with it, since siblings lay out
+  // against an element's untransformed box, not its visual position;
+  // that mismatch is what caused the heading and bio to overlap when
+  // they were animated as two independent transforms. The bio panel
+  // just fades/settles in underneath, arriving as the frame finishes
+  // growing rather than popping in abruptly.
   tl.to(echoes, { opacity: 0, duration: 0.3 }, 0)
-    .to(content, { opacity: 0, y: -30, duration: 0.3 }, 0)
     .to(main, {
       top: 0, right: 0, width: "100%", height: "100%",
       clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
@@ -469,6 +482,30 @@ function initProfileFrame(){
       top: "5%", right: "8%", width: "38%", height: "95%",
       duration: 1, ease: "power2.inOut"
     }, 0.1);
+  }
+  if (content) {
+    tl.to(content, { y: 70, duration: 1, ease: "power2.inOut" }, 0.1);
+  }
+  if (heading) {
+    // Card is white now, not the old teal-to-navy gradient — so the
+    // heading text (visible from the very start, unlike the bio) has to
+    // darken from its pre-scroll light color to a dark one. It can't
+    // start on the same schedule as the card's own grow tween though:
+    // main's `right`/`width` grow from the right edge, so its left edge
+    // — the part that actually reaches the heading, which sits near the
+    // left — doesn't get there until very late in that tween (eased,
+    // so even later in real terms). Starting the color change at 0.1
+    // like the grow tween made the text visibly gray while still sitting
+    // over the dark page background. Delaying it to start well after
+    // the card's left edge has plausibly swept past keeps the text
+    // legible throughout instead of just at the two ends.
+    tl.to(heading, {
+      "--hero-fg": "#13273a", "--hero-accent": "#0a4a3f",
+      duration: 0.4, ease: "power2.inOut"
+    }, 0.7);
+  }
+  if (bio) {
+    tl.to(bio, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 0.6);
   }
 }
 

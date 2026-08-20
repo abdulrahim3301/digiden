@@ -43,13 +43,34 @@
 
 <main>
 
-  <!-- FRAME HERO: stacked echo frame, tilts with cursor, grows full-bleed on scroll -->
-  <section class="profile-frame-hero" id="profileFrameHero">
+  <!-- FRAME HERO: stacked echo frame, tilts with cursor, grows full-bleed on
+       scroll. Heading + bio now live inside the hero itself — heading slides
+       down and the bio panel fades/slides in as the frame grows, so both end
+       up resting on the empty left side of the full-bleed gradient card
+       instead of the bio living in a separate section below. -->
+  <section class="profile-frame-hero hero-white-card" id="profileFrameHero">
     <div class="frame-hero-content" id="frameHeroContent">
-      <a href="team.html" class="profile-back">← Back to team</a>
-      <span class="frame-hero-eyebrow">Co-Founder &amp; Head of Digital Growth</span>
-      <h1 class="frame-hero-title">Abdul Rahim</h1>
-      <p class="frame-hero-hint">Scroll ↓</p>
+      <div class="frame-hero-heading" id="frameHeroHeading">
+        <a href="team.html" class="profile-back">← Back to team</a>
+        <span class="frame-hero-eyebrow">Co-Founder &amp; Head of Digital Growth</span>
+        <h1 class="frame-hero-title">Abdul Rahim</h1>
+      </div>
+      <div class="frame-hero-bio" id="frameHeroBio">
+        <p class="profile-bio">Currently Head of Digital Growth at Atari Technologies, where he built and now leads a cross-functional team of designers, video editors, web developers and social media managers revamping the digital presence of 17+ established UK-based brands across food, leisure, education, healthcare, news and legal sectors.</p>
+        <p class="profile-bio">Nearly a decade as a top-rated brand strategist on Upwork, delivering full branding packages to 60+ clients across the globe. Alongside that, several years of creative and growth roles across Punjab Government digital initiatives — running campaigns, standing up analytics infrastructure, and generating five-figure lead volumes for public-sector training programs.</p>
+
+        <span class="profile-companies-label">Where he's worked</span>
+        <div class="company-chip-list">
+          <span class="company-chip">Atari Technologies — Head of Digital Growth</span>
+          <span class="company-chip">Upwork — Top-Rated Brand Strategist</span>
+          <span class="company-chip">Punjab IT Board</span>
+        </div>
+
+        <div class="profile-actions">
+          <a href="index.html#contact" class="btn btn-primary">Start a project</a>
+          <a href="https://www.linkedin.com/in/abdulrahim3301/" class="btn btn-ghost" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
+        </div>
+      </div>
     </div>
     <div class="frame-stack" id="frameStack">
       <div class="frame-echo echo-4"></div>
@@ -57,25 +78,7 @@
       <div class="frame-echo echo-2"></div>
       <div class="frame-echo echo-1"></div>
       <div class="frame-main" id="frameMain"></div>
-      <img class="frame-cutout" id="frameCutout" src="assets/team/abdul-rahim.png" alt="Abdul Rahim">
-    </div>
-  </section>
-
-  <!-- BIO -->
-  <section class="profile-bio-section">
-    <p class="profile-bio">Currently Head of Digital Growth at Atari Technologies, where he built and now leads a cross-functional team of designers, video editors, web developers and social media managers revamping the digital presence of 17+ established UK-based brands across food, leisure, education, healthcare, news and legal sectors.</p>
-    <p class="profile-bio">Nearly a decade as a top-rated brand strategist on Upwork, delivering full branding packages to 60+ clients across the globe. Alongside that, several years of creative and growth roles across Punjab Government digital initiatives — running campaigns, standing up analytics infrastructure, and generating five-figure lead volumes for public-sector training programs.</p>
-
-    <span class="profile-companies-label">Where he's worked</span>
-    <div class="company-chip-list">
-      <span class="company-chip">Atari Technologies — Head of Digital Growth</span>
-      <span class="company-chip">Upwork — Top-Rated Brand Strategist</span>
-      <span class="company-chip">Punjab IT Board</span>
-    </div>
-
-    <div class="profile-actions">
-      <a href="index.html#contact" class="btn btn-primary">Start a project</a>
-      <a href="https://www.linkedin.com/in/abdulrahim3301/" class="btn btn-ghost" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
+      <img class="frame-cutout" id="frameCutout" src="assets/team/AbdulWBG.png" alt="Abdul Rahim">
     </div>
   </section>
 

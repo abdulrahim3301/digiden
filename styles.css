@@ -353,6 +353,62 @@ section{
 .frame-hero-title{ font-size: clamp(40px, 6vw, 72px); font-weight:700; margin-bottom: 16px; }
 .frame-hero-hint{ color: var(--text-faint); font-family: var(--font-mono); font-size: 13px; }
 
+/* ===== Abdul Rahim's page only ===== the merged heading+bio-on-card
+   treatment hasn't been rolled out to the other team pages, which still
+   use the plain hero above with a separate bio section below — so all of
+   this is scoped to either .hero-white-card (the section class only
+   present on his page) or to .frame-hero-heading/.frame-hero-bio
+   (wrapper divs that likewise only exist in his markup). Nothing here
+   should affect the other pages; an earlier pass wrote these as
+   unscoped overrides of the shared rules above and leaked onto every
+   other team page (white cards, invisible white-on-white heading text) —
+   this scoping is the fix for that. */
+.hero-white-card .frame-hero-content{
+  position: absolute; z-index: 2; top: clamp(56px, 8vh, 108px);
+  left: max(40px, calc(50% - (var(--container) / 2)));
+  max-width: 500px; padding: 0;
+}
+.hero-white-card .frame-main{ background: var(--white); }
+/* The card is white (not the usual teal-to-navy gradient), so heading
+   text needs to go from light (pre-scroll, sitting over the dark page
+   background) to dark (once the card has grown white beneath it) — a
+   flat color would be invisible at one end or the other. initProfileFrame
+   animates these two custom properties in step with the card's own grow
+   tween, so the text darkens exactly as the white card grows in under it. */
+.frame-hero-heading{ --hero-fg: #ffffff; --hero-accent: #14f0c4; }
+.frame-hero-heading .profile-back{ margin-bottom: clamp(8px, 1.6vh, 20px); color: var(--hero-fg); opacity: 0.8; }
+.frame-hero-heading .frame-hero-eyebrow{ color: var(--hero-accent); margin-bottom: clamp(8px, 1.3vh, 16px); }
+/* Height-driven, not width-driven — a 4vw-style clamp doesn't shrink at
+   all on a short-but-wide viewport (1280x700 laptop-with-chrome sizes),
+   which is exactly the case that was clipping the CTA buttons below the
+   fold. Sizing off vh instead means the whole panel actually shrinks
+   when height is the scarce dimension. */
+.frame-hero-heading .frame-hero-title{
+  font-size: clamp(30px, 7vh, 56px); margin-bottom: 0; line-height:1;
+  color: var(--hero-fg);
+}
+/* Starts invisible (GSAP sets opacity/y in initProfileFrame) and fades/
+   slides into place as the frame grows to full-bleed, landing on the
+   card's empty left half alongside the heading above it. Only ever seen
+   once the card is already white (it fades in near the end of the grow),
+   so — unlike the heading — its colors can just be flat dark-on-white,
+   no animation needed. Sized/spaced with clamp(...,vh,...) throughout so
+   the whole panel scales down on short viewports instead of clipping. */
+.frame-hero-bio{ margin-top: clamp(12px, 2.4vh, 28px); max-width: 480px; }
+.frame-hero-bio .profile-bio{
+  font-size: clamp(12.5px, 2vh, 14.5px); line-height: 1.5;
+  margin-bottom: clamp(8px, 1.4vh, 16px); color: rgba(19,39,58,0.78);
+}
+.frame-hero-bio .profile-companies-label{ margin-bottom: clamp(5px, 0.8vh, 10px); color: rgba(19,39,58,0.5); }
+.frame-hero-bio .company-chip-list{ margin-bottom: 0; gap: 8px; }
+.frame-hero-bio .company-chip{
+  font-size: 11px; padding: 5px 14px;
+  color: rgba(19,39,58,0.78); border-color: rgba(19,39,58,0.18);
+}
+.frame-hero-bio .profile-actions{ margin-top: clamp(12px, 2.4vh, 28px); }
+.frame-hero-bio .btn{ padding: clamp(9px, 1.4vh, 12px) 24px; font-size: 14px; }
+.frame-hero-bio .btn-ghost{ border-color: rgba(19,39,58,0.25); color: #13273a; }
+
 .frame-stack{ position:absolute; inset:0; z-index:1; pointer-events:none; }
 .frame-echo{
   position:absolute;
@@ -400,10 +456,12 @@ section{
 
 @media (max-width: 900px){
   .profile-frame-hero{
-    flex-direction:column; align-items:flex-start; min-height:0;
+    display:flex; flex-direction:column; align-items:flex-start; min-height:0;
     padding: 120px 32px 60px;
   }
   .frame-hero-content{ padding:0; }
+  .hero-white-card .frame-hero-content{ position:static; max-width:none; top:auto; left:auto; }
+  .frame-hero-bio{ margin-top: 32px; }
   .frame-stack{ position:relative; inset:auto; width:100%; }
   .frame-echo{ display:none; }
   .frame-main{
