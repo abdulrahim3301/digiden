@@ -1201,8 +1201,8 @@ section{
 }
 
 /* ============ PRICING CALCULATOR ============ */
-.pricing-hero{ padding-top: 180px; padding-bottom: 20px; max-width: 720px; }
-.pricing-hero .section-desc{ max-width: 100%; }
+.pricing-hero{ padding-top: 180px; padding-bottom: 20px; max-width: 720px; text-align: center; }
+.pricing-hero .section-desc{ max-width: 100%; margin: 0 auto; }
 
 .calculator-section{ display:flex; flex-direction:column; align-items:center; gap: 32px; }
 .calculator-card{
