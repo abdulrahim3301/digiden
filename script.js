@@ -484,6 +484,11 @@ function initProfileFrame(){
     }, 0.1);
   }
   if (content) {
+    // Starts well below its resting spot (clear of the fixed nav — the
+    // CSS `top` alone was too close, so the heading rendered half-hidden
+    // behind the nav bar pre-scroll) and slides UP to settle at the
+    // exact same final position as before.
+    gsap.set(content, { y: 220 });
     tl.to(content, { y: 70, duration: 1, ease: "power2.inOut" }, 0.1);
   }
   if (heading) {

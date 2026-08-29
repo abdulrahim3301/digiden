@@ -155,6 +155,98 @@ section{
 }
 @keyframes scrollcue{ 0%{ top:-60px; } 100%{ top:60px; } }
 
+/* ============ LANDING PAGE — CENTERED TEXT ============
+   Scoped to index.html's sections via their unique IDs, not the shared
+   .section-head class (every other page on the site uses that class
+   too, left-aligned — this centers the hero and each section's intro
+   text on the landing page only). Grid/card content underneath each
+   intro is left as-is. */
+#hero{ align-items:center; }
+#hero .hero-content{ text-align:center; }
+#hero .hero-sub{ margin-left:auto; margin-right:auto; }
+#hero .hero-actions{ justify-content:center; }
+
+#services .section-head,
+#team .section-head,
+#work .section-head,
+#process .section-head,
+#contact .section-head{
+  margin-left:auto; margin-right:auto; text-align:center;
+}
+/* .section-desc has its own (narrower) max-width than .section-head, so
+   centering the parent's text alone left the description paragraph's
+   box sitting flush against the parent's left edge — visually
+   off-center relative to the now-centered title above it. */
+#services .section-desc,
+#team .section-desc,
+#work .section-desc,
+#process .section-desc,
+#contact .section-desc{
+  margin-left:auto; margin-right:auto;
+}
+/* The calculator form itself — centered as a block within the section;
+   labels/inputs inside stay left-aligned since that's how forms read. */
+#contact .calculator-card{ margin-left:auto; margin-right:auto; }
+
+/* ============ CONTACT SECTION — INVERTED BACKGROUND (landing page only) ============
+   Same treatment as the services section: white full-bleed background,
+   dark navy/teal foreground for whatever sits directly on it (the
+   "Start a project" intro text). The calculator card first went solid
+   dark (a deliberate contrast block), then — per this request — a
+   light card instead, so the whole section reads as one balanced
+   white/light composition rather than a dark block sitting on white.
+   Card fill is a faint navy tint (not pure white) plus a soft shadow,
+   so it still reads as a distinct card against the pure-white section
+   behind it. Dark teal (#0a4a3f), not the site's bright --teal, is
+   used for accent text/icons since --teal fails contrast on a light
+   card; --teal itself is kept for borders/focus rings/checkboxes,
+   which are just colored accents, not things read as text. */
+#contact .calculator-card{
+  background: rgba(19,39,58,0.05);
+  border-color: rgba(19,39,58,0.22);
+  box-shadow: 0 24px 60px rgba(19,39,58,0.12);
+}
+#contact .calc-services > label,
+#contact .form-row label{ color: rgba(19,39,58,0.6); }
+#contact .calc-dropdown-toggle,
+#contact .form-row input,
+#contact .form-row select,
+#contact .form-row textarea,
+#contact .calc-hours-row input{
+  background: rgba(19,39,58,0.04);
+  border-color: rgba(19,39,58,0.15);
+  color: var(--bg);
+}
+#contact .calc-dropdown-arrow{ color: rgba(19,39,58,0.45); }
+#contact .calc-dropdown-panel{
+  background: var(--white); border-color: rgba(19,39,58,0.12);
+  box-shadow: 0 20px 50px rgba(19,39,58,0.14);
+}
+#contact .calc-option:hover{ background: rgba(19,39,58,0.05); }
+#contact .calc-option-name{ color: var(--bg); }
+#contact .calc-option-rate,
+#contact .calc-hours-hint,
+#contact .calc-hours-row-rate,
+#contact .calc-hours-row-unit,
+#contact .calc-result-label{ color: rgba(19,39,58,0.5); }
+#contact .calc-hours-row{ background: rgba(19,39,58,0.03); border-color: rgba(19,39,58,0.12); }
+#contact .calc-hours-row-name,
+#contact .calc-lead-fields h3{ color: var(--bg); }
+#contact .calc-result{ border-top-color: rgba(19,39,58,0.12); }
+#contact .calc-result-value{ color: #0a4a3f; }
+#contact .calc-result-note,
+#contact .calc-lead-fields > p{ color: rgba(19,39,58,0.65); }
+#contact .calc-lead-fields{ border-top-color: rgba(19,39,58,0.12); }
+
+#contact{
+  background: var(--white);
+  box-shadow: 0 0 0 100vmax var(--white);
+  clip-path: inset(0 -100vmax);
+}
+#contact .section-eyebrow{ color: #0a4a3f; }
+#contact .section-title{ color: var(--bg); }
+#contact .section-desc{ color: rgba(19,39,58,0.7); }
+
 /* ============ BRAND ASSEMBLE (scroll-driven hero → logo reveal) ============
    Piece positions below are measured directly off assets/Full_FullColor.png
    (1626x392 reference) as percentages, so the custom letterforms interlock
@@ -209,6 +301,7 @@ section{
   border: 1px solid var(--line);
   border-radius: 20px;
   padding: 36px 26px;
+  text-align: center;
   transition: border-color .3s, transform .3s, background .3s;
 }
 .pillar:hover{ border-color: rgba(20,240,196,0.4); background: rgba(255,255,255,0.05); transform: translateY(-6px); }
@@ -217,7 +310,7 @@ section{
   clip-path: var(--hex-clip);
   background: rgba(20,240,196,0.12);
   display:flex; align-items:center; justify-content:center;
-  margin-bottom: 22px;
+  margin: 0 auto 22px;
 }
 .pillar-hex span{ font-family: var(--font-mono); color: var(--teal); font-size:14px; }
 .pillar h3{ font-size: 20px; margin-bottom: 10px; }
@@ -227,6 +320,33 @@ section{
   padding: 9px 0; border-top: 1px solid var(--line);
 }
 .pillar ul li:first-child{ border-top:none; }
+
+/* ============ SERVICES SECTION — INVERTED (landing page only) ============
+   White background instead of the site's usual dark, brand colors used
+   as foreground instead of white/light-gray. box-shadow+clip-path is
+   the standard trick for bleeding a centered, max-width section's
+   background to the full viewport width without restructuring the
+   HTML — the section's own box (padding, max-width) still governs
+   where the actual content sits. Plain teal (--teal) reads fine as an
+   accent on the site's dark background but fails contrast on white, so
+   accents here use a darker teal instead, not the site's usual --teal. */
+#services{
+  background: var(--white);
+  box-shadow: 0 0 0 100vmax var(--white);
+  clip-path: inset(0 -100vmax);
+}
+#services .section-eyebrow{ color: #0a4a3f; }
+#services .section-title{ color: var(--bg); }
+#services .section-desc{ color: rgba(19,39,58,0.7); }
+#services .pillar{ background: rgba(19,39,58,0.03); border-color: rgba(19,39,58,0.12); }
+#services .pillar:hover{ border-color: rgba(20,190,162,0.5); background: rgba(19,39,58,0.06); }
+#services .pillar-hex{ background: rgba(20,190,162,0.16); }
+#services .pillar-hex span{ color: #0a4a3f; }
+#services .pillar h3{ color: var(--bg); }
+#services .pillar-intro{ color: rgba(19,39,58,0.55); }
+#services .pillar ul li{ color: rgba(19,39,58,0.72); border-top-color: rgba(19,39,58,0.12); }
+#services .btn-ghost{ border-color: rgba(19,39,58,0.25); color: var(--bg); }
+#services .btn-ghost:hover{ border-color: #0a4a3f; color: #0a4a3f; }
 .services-strip-cta{ display:table; margin: 40px auto 0; }
 
 @media (max-width: 1000px){ .pillars{ grid-template-columns: repeat(2,1fr); } }
@@ -235,9 +355,14 @@ section{
 /* ============ TEAM STRIP (landing page teaser) ============ */
 /* Same pop-out-photo treatment as team.html's full roster cards, just
    scaled down — row-gap has to clear the photo's overflow above each card. */
-.team-grid{ display:grid; grid-template-columns: repeat(5, 1fr); column-gap: 20px; row-gap: 70px; padding-top: 30px; margin-bottom: 48px; }
+/* Flexbox with justify-content:center instead of CSS grid — with 5 cards
+   at 3-per-row, a grid's incomplete second row sticks to the left
+   (columns 1–2 filled, 3 empty); flex-wrap centers that trailing row
+   automatically, same idea as a centered photo gallery's last row. */
+.team-grid{ display:flex; flex-wrap:wrap; justify-content:center; gap: 70px 20px; padding-top: 30px; margin-bottom: 48px; }
 .team-card{
   position:relative;
+  flex: 0 0 calc(33.333% - 13.34px);
   background: rgba(255,255,255,0.03);
   border: 1px solid var(--line);
   border-radius: 18px;
@@ -258,8 +383,8 @@ section{
 .team-link:hover{ color: var(--white); }
 .team-strip-cta{ display:table; margin: 0 auto; }
 
-@media (max-width: 1000px){ .team-grid{ grid-template-columns: repeat(2,1fr); } }
-@media (max-width: 600px){ .team-grid{ grid-template-columns: 1fr; } }
+@media (max-width: 1000px){ .team-card{ flex-basis: calc(50% - 10px); } }
+@media (max-width: 600px){ .team-card{ flex-basis: 100%; } }
 
 /* ============ TEAM PAGE (team.html full roster) ============ */
 .team-hero{ padding-top: 180px; padding-bottom: 60px; }
@@ -480,7 +605,7 @@ section{
 }
 
 /* ============ PORTFOLIO ============ */
-.portfolio-filters{ display:flex; gap:10px; margin-bottom: 40px; flex-wrap:wrap; }
+.portfolio-filters{ display:flex; gap:10px; margin-bottom: 40px; flex-wrap:wrap; justify-content:center; }
 .filter-btn{
   background: transparent; border: 1px solid var(--line); color: var(--text-soft);
   padding: 9px 20px; border-radius: 999px; font-size: 14px; transition: all .2s;
@@ -540,11 +665,11 @@ section{
 
 /* ============ PROCESS ============ */
 .process-steps{ display:flex; align-items:flex-start; gap: 0; }
-.process-step{ flex:1; }
+.process-step{ flex:1; text-align:center; }
 .process-num{ font-family: var(--font-mono); color: var(--teal); font-size: 14px; margin-bottom:14px; }
 .process-step h3{ font-size: 24px; margin-bottom: 12px; }
-.process-step p{ color: var(--text-soft); font-size:15px; max-width:280px; }
-.process-connector{ width: 60px; height:1px; background: var(--line); margin-top: 10px; align-self:flex-start; }
+.process-step p{ color: var(--text-soft); font-size:15px; max-width:280px; margin-left:auto; margin-right:auto; }
+.process-connector{ width: 60px; height:1px; background: var(--line); margin-top: 10px; align-self:center; }
 
 @media (max-width: 860px){
   .process-steps{ flex-direction:column; gap: 36px; }
@@ -579,7 +704,7 @@ section{
    value, so the restart is seamless regardless of card count/sizing. */
 .portfolio-strip{ padding: 0 0 60px; }
 .portfolio-strip-inner{
-  display:flex; align-items:stretch; height: 380px;
+  display:flex; align-items:stretch; height: 300px;
   border-radius: 20px; overflow:hidden;
   border: 1px solid var(--line);
 }
@@ -598,7 +723,7 @@ section{
 .portfolio-scroll-wrap{ flex:1; overflow:hidden; position:relative; }
 .portfolio-scroll-track{ display:flex; gap:20px; height:100%; width:max-content; }
 .portfolio-logo-card{
-  flex: 0 0 240px; height:100%;
+  flex: 0 0 300px; height:100%;
   background: var(--bg-alt); border:1px solid var(--line); border-radius:16px;
   overflow:hidden;
 }
@@ -623,10 +748,10 @@ section{
 .portfolio-filmstrip-thumb.active{ opacity:1; border-color: var(--teal); }
 
 @media (max-width: 700px){
-  .portfolio-strip-inner{ height:280px; }
+  .portfolio-strip-inner{ height:200px; }
   .portfolio-anchor{ flex-basis:110px; }
   .portfolio-anchor span{ font-size:11px; }
-  .portfolio-logo-card{ flex-basis:170px; }
+  .portfolio-logo-card{ flex-basis:200px; }
   .portfolio-filmstrip-thumb{ flex-basis:42px; height:42px; }
 }
 
@@ -1071,6 +1196,94 @@ section{
   .calculator-card{ padding: 28px; }
 }
 
+/* ============ TEAM MEMBER CONTENT MODULES ============
+   Reusable content-section components for individual team pages — stat
+   strips, timelines, testimonials, case studies, logo grids, brand-
+   system cards, flow diagrams, tool chips. Layout patterns adapted from
+   internal reference mockups (colors/fonts already matched our tokens);
+   the profile-frame-hero banner above each of these stays the same
+   scroll-grow effect regardless of which of these a given page uses. */
+
+.stat-strip{
+  display:grid; grid-template-columns: repeat(3,1fr); gap: 24px;
+  padding: 48px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+}
+.stat-block{ text-align:left; }
+.stat-num{ font-family: var(--font-display); font-size: clamp(32px,4vw,48px); font-weight:700; color: var(--teal); }
+.stat-label{ color: var(--text-soft); font-size: 14px; margin-top: 6px; }
+@media (max-width:700px){ .stat-strip{ grid-template-columns:1fr; gap:28px; } }
+
+.tools-list{ display:flex; flex-wrap:wrap; gap: 12px; margin-top: 20px; }
+.tool-chip{
+  font-family: var(--font-mono); font-size: 13px; color: var(--text-soft);
+  border: 1px solid var(--line); border-radius: 999px; padding: 9px 18px;
+}
+
+.timeline{ display:flex; flex-direction:column; gap:0; max-width:640px; margin-top: 8px; }
+.timeline-item{ position:relative; padding:0 0 32px 32px; border-left:1px solid var(--line); }
+.timeline-item:last-child{ padding-bottom:0; border-left-color:transparent; }
+.timeline-dot{ position:absolute; left:-6px; top:2px; width:11px; height:11px; border-radius:50%; background:var(--teal); }
+.timeline-item h4{ font-family:var(--font-display); font-size:17px; margin-bottom:6px; }
+.timeline-item p{ color:var(--text-soft); font-size:14px; margin:0; }
+
+.testimonials{ display:flex; flex-direction:column; gap:16px; max-width:640px; margin-top: 8px; }
+.testimonial{ border:1px solid var(--line); border-radius:16px; padding:28px; }
+.testimonial p{ font-family:var(--font-display); font-size:17px; margin-bottom:12px; line-height:1.4; }
+.testimonial span{ font-family:var(--font-mono); font-size:12px; color:var(--teal); }
+
+.case-studies{ display:flex; flex-direction:column; gap: 24px; }
+.case-card{
+  display:grid; grid-template-columns: 1fr 1fr; gap: 36px; align-items:center;
+  border: 1px solid var(--line); border-radius: 20px; padding: 36px;
+  background: rgba(255,255,255,0.02);
+}
+.case-tag{ font-family: var(--font-mono); font-size:12px; color: var(--teal); text-transform:uppercase; letter-spacing:0.08em; }
+.case-title{ font-family: var(--font-display); font-size: 21px; font-weight:600; margin: 8px 0 18px; }
+.case-row{ margin-bottom: 12px; }
+.case-row .k{ font-family: var(--font-mono); font-size:11px; color: var(--text-faint); text-transform:uppercase; letter-spacing:0.08em; display:block; margin-bottom:4px; }
+.case-row .v{ font-size: 14px; color: var(--text-soft); line-height:1.6; }
+.case-result{ font-family: var(--font-display); color: var(--teal); font-weight:700; font-size: 16px; }
+@media (max-width:900px){ .case-card{ grid-template-columns:1fr; } }
+
+.fake-dashboard{
+  background: var(--bg-alt); border-radius: 14px; border:1px solid var(--line);
+  padding: 22px; display:flex; flex-direction:column; gap: 16px;
+}
+.fd-top{ display:flex; justify-content:space-between; gap: 16px; flex-wrap:wrap; }
+.fd-kpi .fd-num{ font-family: var(--font-mono); font-size: 20px; color: var(--white); font-weight:600; }
+.fd-kpi .fd-lbl{ font-family: var(--font-mono); font-size: 10px; color: var(--text-faint); text-transform:uppercase; }
+.fd-chart{ display:flex; align-items:flex-end; gap: 6px; height: 90px; }
+.fd-bar{ flex:1; background: linear-gradient(to top, var(--teal-dim), var(--teal)); border-radius: 3px 3px 0 0; opacity:0.85; }
+.fd-line{ width:100%; height: 40px; }
+.fd-line path{ fill:none; stroke: var(--teal); stroke-width:2; }
+
+.logo-grid{ display:grid; grid-template-columns:repeat(6,1fr); gap:14px; max-width: 640px; }
+.logo-tile{ aspect-ratio:1; border-radius:14px; display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-weight:700; color:#fff; font-size:14px; }
+@media (max-width:700px){ .logo-grid{ grid-template-columns:repeat(3,1fr); } }
+
+.brand-systems{ display:flex; flex-direction:column; gap:24px; }
+.brand-card{ border:1px solid var(--line); border-radius:20px; padding:36px; background:rgba(255,255,255,0.02); max-width:560px; }
+.bc-mark{ width:64px; height:64px; clip-path:var(--hex-clip); margin-bottom:18px; display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-weight:700; font-size:20px; color:var(--bg); }
+.bc-name{ font-family:var(--font-display); font-size:19px; font-weight:600; margin-bottom:6px; }
+.bc-tag{ font-family:var(--font-mono); font-size:12px; color:var(--teal); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:18px; display:block; }
+.bc-palette{ display:flex; gap:8px; margin:16px 0; }
+.bc-swatch{ width:26px; height:26px; border-radius:50%; border:1px solid rgba(255,255,255,0.15); }
+.bc-type{ font-family:var(--font-mono); font-size:12px; color:var(--text-faint); margin-bottom:16px; }
+.bc-mockup{ display:flex; gap:12px; margin-top:18px; flex-wrap:wrap; }
+.bc-card-mock{ width:110px; height:66px; border-radius:8px; background:var(--bg-alt); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-size:11px; color:var(--text-soft); padding:8px; text-align:center; }
+
+.flow-diagram{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top: 8px; }
+.flow-node{ border:1px solid var(--line); border-radius:12px; padding:14px 18px; font-family:var(--font-mono); font-size:12px; color:var(--white); background:rgba(255,255,255,0.03); text-align:center; }
+.flow-arrow{ color:var(--teal); font-size:16px; }
+
+/* Light-content pages (e.g. thin bios) — a simpler focus-area grid
+   instead of forcing a data-heavy template onto a one-line bio. */
+.focus-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+.focus-card{ border:1px solid var(--line); border-radius:16px; padding:28px; background:rgba(255,255,255,0.02); }
+.focus-card h4{ font-family:var(--font-display); font-size:17px; margin-bottom:8px; }
+.focus-card p{ color:var(--text-soft); font-size:14px; margin:0; }
+@media (max-width:800px){ .focus-grid{ grid-template-columns:1fr; } }
+
 /* ============ FOOTER ============ */
 .footer{ border-top: 1px solid var(--line); padding: 50px 40px 30px; }
 .footer-top{ display:flex; justify-content:space-between; align-items:center; max-width: var(--container); margin: 0 auto 30px; flex-wrap:wrap; gap:20px; }
@@ -1080,6 +1293,17 @@ section{
   max-width: var(--container); margin: 0 auto; display:flex; justify-content:space-between;
   font-size: 13px; color: var(--text-faint); font-family: var(--font-mono); flex-wrap:wrap; gap:10px;
 }
+
+/* ============ FOOTER — INVERTED (landing page only) ============
+   Same white-background pattern as services/contact. Scoped to
+   #landingFooter (an id added only on index.html's footer) since
+   .footer/.footer-links/.footer-bottom are shared markup on every
+   page. The logo image itself (Full_FullColor.png) is already a
+   full-color mark, not a white cutout, so it needs no swap here. */
+#landingFooter{ background: var(--white); border-top-color: rgba(19,39,58,0.12); }
+#landingFooter .footer-links{ color: rgba(19,39,58,0.65); }
+#landingFooter .footer-links a:hover{ color: #0a4a3f; }
+#landingFooter .footer-bottom{ color: rgba(19,39,58,0.45); }
 
 @media (max-width: 600px){
   section{ padding: 80px 22px; }
