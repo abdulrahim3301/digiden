@@ -360,7 +360,23 @@ function initBrandAssemble(){
   // every frame (rather than onLeave/onEnterBack) so a single fast scroll
   // that jumps clean across the whole pin range can't skip the transition
   // and leave it stuck in the wrong mode over the sections below.
-  let assembleFixed = true;
+  //
+  // assembleFixed starts unknown (null), not a hardcoded true — this
+  // function itself runs after a double-rAF defer (see the bottom of this
+  // file), and if the page gets scrolled all the way down before that
+  // defer fires, the real state at setup time is already "past the pin,
+  // should be absolute" while a hardcoded `true` would claim the
+  // opposite. Only the ticker's ongoing per-frame calls would ever have
+  // corrected it — but that requires that some later frame actually
+  // computes shouldBeFixed=false, which never happens if the user then
+  // scrolls straight back to the top before the first tick: progress
+  // there reads ~0 (shouldBeFixed=true), matches the wrongly-true start
+  // value, and the mismatch — and the fix — is never triggered at all.
+  // The overlay is then permanently stuck in fixed mode, covering the
+  // hero. Starting unknown forces the very first call (made synchronously
+  // below, right after the trigger exists) to always apply whatever the
+  // real state actually is.
+  let assembleFixed = null;
   function syncAssemblePosition(progress){
     const shouldBeFixed = progress < 0.999;
     if (shouldBeFixed === assembleFixed) return;
@@ -396,6 +412,7 @@ function initBrandAssemble(){
   // GSAP's ticker runs every frame regardless, so it's the one thing
   // guaranteed to catch the transition.
   const heroTrigger = tl.scrollTrigger;
+  syncAssemblePosition(heroTrigger.progress);
   gsap.ticker.add(() => syncAssemblePosition(heroTrigger.progress));
 
   tl.to(content, { opacity: 0, y: -40, duration: 0.3, ease: "power1.in" }, 0)

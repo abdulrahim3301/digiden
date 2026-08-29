@@ -1,13 +1,35 @@
 /* ============ TOKENS ============ */
+/* ==========================================================================
+   COLOR PALETTE — the ONE place to tweak brand shades/tints site-wide.
+   Everything below reads from these variables, so changing a hex here
+   updates every page/component that uses it. Groups:
+     1. BRAND CORE      — the site's signature colors (teal, navy).
+     2. DARK-SURFACE TEXT — text/border colors used on the default navy bg.
+     3. LIGHT-SURFACE PALETTE — used on inverted (pale/white) sections like
+        services.html, the homepage "What we do"/"Contact" sections, and
+        any white bio cards. --ink-rgb is the raw R,G,B triplet (no alpha)
+        so rgba(var(--ink-rgb), 0.4)-style rules can pick their own opacity
+        while still all re-tinting together if you change the base color.
+   ========================================================================== */
 :root{
+  /* 1. BRAND CORE */
   --bg: #13273a;
   --bg-alt: #0e1e2d;
   --teal: #14f0c4;
   --teal-dim: #14bea2;
   --white: #ffffff;
+
+  /* 2. DARK-SURFACE TEXT (default navy background) */
   --text-soft: rgba(255,255,255,0.66);
   --text-faint: rgba(255,255,255,0.4);
   --line: rgba(255,255,255,0.1);
+
+  /* 3. LIGHT-SURFACE PALETTE (inverted/pale sections) */
+  --surface-light: #eef3f8;       /* pale brand-blue tint — swap in for pure white */
+  --surface-light-alt: #e2eaf5;   /* a touch deeper, for cards/rows sitting on --surface-light */
+  --ink-rgb: 19,39,58;            /* = --bg, as raw RGB so rgba(var(--ink-rgb), X) works */
+  --ink-accent: #0a4a3f;          /* dark teal for accent TEXT on light bg (--teal fails contrast there) */
+
   --font-display: 'Space Grotesk', sans-serif;
   --font-body: 'Inter', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
@@ -89,8 +111,9 @@ section{
   position: fixed; top:0; left:0; right:0; z-index: 200;
   display:flex; align-items:center; justify-content:space-between;
   padding: 22px 40px;
-  background: linear-gradient(to bottom, rgba(19,39,58,0.85), transparent);
-  backdrop-filter: blur(6px);
+  background: rgba(var(--ink-rgb),0.72);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 .nav-logo{ display:flex; align-items:center; }
 .nav-logo img{ width:auto; height:32px; }
@@ -197,55 +220,55 @@ section{
    white/light composition rather than a dark block sitting on white.
    Card fill is a faint navy tint (not pure white) plus a soft shadow,
    so it still reads as a distinct card against the pure-white section
-   behind it. Dark teal (#0a4a3f), not the site's bright --teal, is
+   behind it. Dark teal (--ink-accent, #0a4a3f by default), not the site's bright --teal, is
    used for accent text/icons since --teal fails contrast on a light
    card; --teal itself is kept for borders/focus rings/checkboxes,
    which are just colored accents, not things read as text. */
 #contact .calculator-card{
-  background: rgba(19,39,58,0.05);
-  border-color: rgba(19,39,58,0.22);
-  box-shadow: 0 24px 60px rgba(19,39,58,0.12);
+  background: rgba(var(--ink-rgb),0.05);
+  border-color: rgba(var(--ink-rgb),0.22);
+  box-shadow: 0 24px 60px rgba(var(--ink-rgb),0.12);
 }
 #contact .calc-services > label,
-#contact .form-row label{ color: rgba(19,39,58,0.6); }
+#contact .form-row label{ color: rgba(var(--ink-rgb),0.6); }
 #contact .calc-dropdown-toggle,
 #contact .form-row input,
 #contact .form-row select,
 #contact .form-row textarea,
 #contact .calc-hours-row input{
-  background: rgba(19,39,58,0.04);
-  border-color: rgba(19,39,58,0.15);
+  background: rgba(var(--ink-rgb),0.04);
+  border-color: rgba(var(--ink-rgb),0.15);
   color: var(--bg);
 }
-#contact .calc-dropdown-arrow{ color: rgba(19,39,58,0.45); }
+#contact .calc-dropdown-arrow{ color: rgba(var(--ink-rgb),0.45); }
 #contact .calc-dropdown-panel{
-  background: var(--white); border-color: rgba(19,39,58,0.12);
-  box-shadow: 0 20px 50px rgba(19,39,58,0.14);
+  background: var(--white); border-color: rgba(var(--ink-rgb),0.12);
+  box-shadow: 0 20px 50px rgba(var(--ink-rgb),0.14);
 }
-#contact .calc-option:hover{ background: rgba(19,39,58,0.05); }
+#contact .calc-option:hover{ background: rgba(var(--ink-rgb),0.05); }
 #contact .calc-option-name{ color: var(--bg); }
 #contact .calc-option-rate,
 #contact .calc-hours-hint,
 #contact .calc-hours-row-rate,
 #contact .calc-hours-row-unit,
-#contact .calc-result-label{ color: rgba(19,39,58,0.5); }
-#contact .calc-hours-row{ background: rgba(19,39,58,0.03); border-color: rgba(19,39,58,0.12); }
+#contact .calc-result-label{ color: rgba(var(--ink-rgb),0.5); }
+#contact .calc-hours-row{ background: rgba(var(--ink-rgb),0.03); border-color: rgba(var(--ink-rgb),0.12); }
 #contact .calc-hours-row-name,
 #contact .calc-lead-fields h3{ color: var(--bg); }
-#contact .calc-result{ border-top-color: rgba(19,39,58,0.12); }
-#contact .calc-result-value{ color: #0a4a3f; }
+#contact .calc-result{ border-top-color: rgba(var(--ink-rgb),0.12); }
+#contact .calc-result-value{ color: var(--ink-accent); }
 #contact .calc-result-note,
-#contact .calc-lead-fields > p{ color: rgba(19,39,58,0.65); }
-#contact .calc-lead-fields{ border-top-color: rgba(19,39,58,0.12); }
+#contact .calc-lead-fields > p{ color: rgba(var(--ink-rgb),0.65); }
+#contact .calc-lead-fields{ border-top-color: rgba(var(--ink-rgb),0.12); }
 
 #contact{
   background: var(--white);
   box-shadow: 0 0 0 100vmax var(--white);
   clip-path: inset(0 -100vmax);
 }
-#contact .section-eyebrow{ color: #0a4a3f; }
+#contact .section-eyebrow{ color: var(--ink-accent); }
 #contact .section-title{ color: var(--bg); }
-#contact .section-desc{ color: rgba(19,39,58,0.7); }
+#contact .section-desc{ color: rgba(var(--ink-rgb),0.7); }
 
 /* ============ BRAND ASSEMBLE (scroll-driven hero → logo reveal) ============
    Piece positions below are measured directly off assets/Full_FullColor.png
@@ -335,18 +358,18 @@ section{
   box-shadow: 0 0 0 100vmax var(--white);
   clip-path: inset(0 -100vmax);
 }
-#services .section-eyebrow{ color: #0a4a3f; }
+#services .section-eyebrow{ color: var(--ink-accent); }
 #services .section-title{ color: var(--bg); }
-#services .section-desc{ color: rgba(19,39,58,0.7); }
-#services .pillar{ background: rgba(19,39,58,0.03); border-color: rgba(19,39,58,0.12); }
-#services .pillar:hover{ border-color: rgba(20,190,162,0.5); background: rgba(19,39,58,0.06); }
+#services .section-desc{ color: rgba(var(--ink-rgb),0.7); }
+#services .pillar{ background: rgba(var(--ink-rgb),0.03); border-color: rgba(var(--ink-rgb),0.12); }
+#services .pillar:hover{ border-color: rgba(20,190,162,0.5); background: rgba(var(--ink-rgb),0.06); }
 #services .pillar-hex{ background: rgba(20,190,162,0.16); }
-#services .pillar-hex span{ color: #0a4a3f; }
+#services .pillar-hex span{ color: var(--ink-accent); }
 #services .pillar h3{ color: var(--bg); }
-#services .pillar-intro{ color: rgba(19,39,58,0.55); }
-#services .pillar ul li{ color: rgba(19,39,58,0.72); border-top-color: rgba(19,39,58,0.12); }
-#services .btn-ghost{ border-color: rgba(19,39,58,0.25); color: var(--bg); }
-#services .btn-ghost:hover{ border-color: #0a4a3f; color: #0a4a3f; }
+#services .pillar-intro{ color: rgba(var(--ink-rgb),0.55); }
+#services .pillar ul li{ color: rgba(var(--ink-rgb),0.72); border-top-color: rgba(var(--ink-rgb),0.12); }
+#services .btn-ghost{ border-color: rgba(var(--ink-rgb),0.25); color: var(--bg); }
+#services .btn-ghost:hover{ border-color: var(--ink-accent); color: var(--ink-accent); }
 .services-strip-cta{ display:table; margin: 40px auto 0; }
 
 @media (max-width: 1000px){ .pillars{ grid-template-columns: repeat(2,1fr); } }
@@ -522,17 +545,17 @@ section{
 .frame-hero-bio{ margin-top: clamp(12px, 2.4vh, 28px); max-width: 480px; }
 .frame-hero-bio .profile-bio{
   font-size: clamp(12.5px, 2vh, 14.5px); line-height: 1.5;
-  margin-bottom: clamp(8px, 1.4vh, 16px); color: rgba(19,39,58,0.78);
+  margin-bottom: clamp(8px, 1.4vh, 16px); color: rgba(var(--ink-rgb),0.78);
 }
-.frame-hero-bio .profile-companies-label{ margin-bottom: clamp(5px, 0.8vh, 10px); color: rgba(19,39,58,0.5); }
+.frame-hero-bio .profile-companies-label{ margin-bottom: clamp(5px, 0.8vh, 10px); color: rgba(var(--ink-rgb),0.5); }
 .frame-hero-bio .company-chip-list{ margin-bottom: 0; gap: 8px; }
 .frame-hero-bio .company-chip{
   font-size: 11px; padding: 5px 14px;
-  color: rgba(19,39,58,0.78); border-color: rgba(19,39,58,0.18);
+  color: rgba(var(--ink-rgb),0.78); border-color: rgba(var(--ink-rgb),0.18);
 }
 .frame-hero-bio .profile-actions{ margin-top: clamp(12px, 2.4vh, 28px); }
 .frame-hero-bio .btn{ padding: clamp(9px, 1.4vh, 12px) 24px; font-size: 14px; }
-.frame-hero-bio .btn-ghost{ border-color: rgba(19,39,58,0.25); color: #13273a; }
+.frame-hero-bio .btn-ghost{ border-color: rgba(var(--ink-rgb),0.25); color: var(--bg); }
 
 .frame-stack{ position:absolute; inset:0; z-index:1; pointer-events:none; }
 .frame-echo{
@@ -910,7 +933,7 @@ section{
 .form-row select{ appearance:none; }
 .form-submit{ grid-column: 1/-1; justify-self:flex-start; margin-top: 6px; border:none; }
 
-/* ============ SERVICES (dedicated page) ============ */
+/* ============ SERVICES (dedicated page) — inverted, light palette ============ */
 /* .services-hero is a <section>, so it inherits max-width:1180px;margin:0
    auto from the base rule — that's what has to stay, so its left edge
    lines up with the (also 1180px, auto-centered) .service-domain sections
@@ -918,14 +941,25 @@ section{
    instead of the section itself; putting max-width:720px on the section
    directly made IT (not just its text) a narrower, separately-centered
    box, so on wide screens it visibly sat shifted toward the middle
-   instead of lining up with the body content underneath. */
+   instead of lining up with the body content underneath.
+   The full-bleed light background (box-shadow spread + clip-path) is the
+   same trick used elsewhere on the site to invert a max-width-constrained
+   section without its background getting clipped to the container width. */
+.services-hero,
+.service-domain{
+  background: var(--surface-light);
+  box-shadow: 0 0 0 100vmax var(--surface-light);
+  clip-path: inset(0 -100vmax);
+}
 .services-hero{ padding-top: 180px; padding-bottom: 20px; }
-.services-hero-inner{ max-width: 720px; }
-.services-hero .section-desc{ max-width: 100%; }
-.services-hero .section-desc a{ color: var(--teal); }
-.services-hero .section-desc a:hover{ color: var(--white); }
+.services-hero-inner{ max-width: 720px; margin: 0 auto; text-align: center; }
+.services-hero .section-eyebrow{ color: var(--ink-accent); }
+.services-hero .section-title{ color: var(--bg); }
+.services-hero .section-desc{ max-width: 100%; color: rgba(var(--ink-rgb),0.7); }
+.services-hero .section-desc a{ color: var(--ink-accent); }
+.services-hero .section-desc a:hover{ color: var(--bg); }
 
-.service-domain-head{ max-width: 640px; margin-bottom: 40px; }
+.service-domain-head{ max-width: 640px; margin: 0 auto 40px; text-align: center; }
 /* The domain name (in .section-eyebrow) is what should read as the heading
    here — the tagline (in .section-title) is supporting text underneath it,
    not the headline. Swaps just the font/color treatment between the two,
@@ -935,7 +969,7 @@ section{
   font-family: var(--font-display);
   font-size: clamp(28px, 4vw, 40px);
   font-weight: 700;
-  color: var(--white);
+  color: var(--bg);
   text-transform: none;
   letter-spacing: normal;
   margin-bottom: 10px;
@@ -944,26 +978,71 @@ section{
   font-family: var(--font-mono);
   font-size: 13px;
   font-weight: 400;
-  color: var(--teal);
+  color: var(--ink-accent);
   text-transform: uppercase;
   letter-spacing: 0.12em;
   margin-bottom: 0;
 }
-.service-sub-grid{ display:flex; flex-direction:column; gap: 20px; }
+/* Same balancing trick as .team-grid on the homepage: a 3-up flex-wrap row,
+   centered, so an incomplete last row (2 cards, or 1) sits centered instead
+   of stuck to the left with dead space on the other side. */
+.service-sub-grid{ display:flex; flex-wrap:wrap; justify-content:center; align-items:stretch; gap: 20px; }
 .service-sub-card{
-  background: rgba(255,255,255,0.03);
-  border: 1px solid var(--line);
+  flex: 0 0 calc(33.333% - 13.34px);
+  display: flex;
+  flex-direction: column;
+  background: var(--white);
+  border: 1px solid rgba(var(--ink-rgb),0.1);
   border-radius: 20px;
   padding: 32px;
 }
-.service-sub-card h3{ font-size: 20px; margin-bottom: 10px; }
-.service-sub-desc{ color: var(--text-soft); font-size: 15px; margin-bottom: 18px; max-width: 620px; }
-.service-deliverables{ display:flex; flex-wrap:wrap; gap: 8px; }
-.service-domain-cta{ margin-top: 40px; border:none; }
-.service-domain-cta-row{ display:flex; gap: 14px; flex-wrap:wrap; margin-top: 40px; }
+.service-sub-text{ display:flex; flex-direction:column; flex: 1 1 auto; min-width: 0; }
+.service-sub-card h3{ font-size: 19px; margin-bottom: 10px; color: var(--bg); }
+.service-sub-desc{ color: rgba(var(--ink-rgb),0.65); font-size: 15px; margin-bottom: 18px; }
+/* pinned to the bottom via margin-top:auto so cards with a shorter
+   description still line their chip row up with taller neighbors in the
+   same row (the row itself is equal-height via align-items:stretch above). */
+.service-deliverables{ display:flex; flex-wrap:wrap; gap: 8px; margin-top: auto; }
+.service-deliverables .company-chip{ color: rgba(var(--ink-rgb),0.7); border-color: rgba(var(--ink-rgb),0.16); }
 
+/* supporting visual — a small brand-styled line-icon illustrating the
+   service, not a stock photo, so it stays consistent with the site's own
+   visual language (same idea as .domain-example-visual below). Placed
+   above the text (order:-1) to match the icon-on-top / text-below rhythm
+   of .team-card, rather than the wide text+visual row that only worked at
+   the 2-up card width. */
+.service-sub-visual{
+  order: -1;
+  flex: 0 0 auto;
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  margin-bottom: 20px;
+  background: var(--surface-light-alt);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.service-sub-visual svg{
+  width: 28px;
+  height: 28px;
+  color: var(--ink-accent);
+  stroke-width: 1.8;
+}
+
+.service-domain-cta{ margin-top: 40px; border:none; }
+.service-domain-cta-row{ display:flex; justify-content:center; gap: 14px; flex-wrap:wrap; margin-top: 40px; }
+
+/* domains with an even card count (currently just Web & Tech Build, 4
+   cards) read better as a clean 2x2 than a lopsided 3+1 row. */
+.service-sub-grid.grid-2up .service-sub-card{ flex-basis: calc(50% - 10px); }
+.service-domain-cta-row .btn-ghost{ border-color: rgba(var(--ink-rgb),0.25); color: var(--bg); }
+.service-domain-cta-row .btn-ghost:hover{ border-color: var(--ink-accent); color: var(--ink-accent); }
+
+@media (max-width: 1000px){ .service-sub-card{ flex-basis: calc(50% - 10px); } }
 @media (max-width: 600px){
-  .service-sub-card{ padding: 24px; }
+  .service-sub-card{ flex-basis: 100%; padding: 24px; }
+  .service-sub-grid.grid-2up .service-sub-card{ flex-basis: 100%; }
 }
 
 /* ============ SERVICE DOMAIN DETAIL PAGE ============ */
@@ -1068,7 +1147,7 @@ section{
 .viz-chat-bubble.bot{ background: rgba(255,255,255,0.08); border-bottom-left-radius: 2px; align-self:flex-start; }
 .viz-chat-bubble.user{ background: var(--teal); border-bottom-right-radius: 2px; align-self:flex-end; }
 .viz-chat-bubble span{ display:block; height: 5px; width: 46px; border-radius: 3px; background: rgba(255,255,255,0.35); }
-.viz-chat-bubble.user span{ background: rgba(19,39,58,0.5); }
+.viz-chat-bubble.user span{ background: rgba(var(--ink-rgb),0.5); }
 
 /* connected-node integration diagram */
 .viz-nodes{ width: 130px; height: 100px; }
@@ -1293,17 +1372,6 @@ section{
   max-width: var(--container); margin: 0 auto; display:flex; justify-content:space-between;
   font-size: 13px; color: var(--text-faint); font-family: var(--font-mono); flex-wrap:wrap; gap:10px;
 }
-
-/* ============ FOOTER — INVERTED (landing page only) ============
-   Same white-background pattern as services/contact. Scoped to
-   #landingFooter (an id added only on index.html's footer) since
-   .footer/.footer-links/.footer-bottom are shared markup on every
-   page. The logo image itself (Full_FullColor.png) is already a
-   full-color mark, not a white cutout, so it needs no swap here. */
-#landingFooter{ background: var(--white); border-top-color: rgba(19,39,58,0.12); }
-#landingFooter .footer-links{ color: rgba(19,39,58,0.65); }
-#landingFooter .footer-links a:hover{ color: #0a4a3f; }
-#landingFooter .footer-bottom{ color: rgba(19,39,58,0.45); }
 
 @media (max-width: 600px){
   section{ padding: 80px 22px; }
