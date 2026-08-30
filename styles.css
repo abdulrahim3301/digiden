@@ -543,7 +543,14 @@ section{
    tween, so the text darkens exactly as the white card grows in under it. */
 .frame-hero-heading{ --hero-fg: #ffffff; --hero-accent: #14f0c4; }
 .frame-hero-heading .profile-back{ margin-bottom: clamp(8px, 1.6vh, 20px); color: var(--hero-fg); opacity: 0.8; }
-.frame-hero-heading .frame-hero-eyebrow{ color: var(--hero-accent); margin-bottom: clamp(8px, 1.3vh, 16px); }
+/* Bumped up from the standard small-mono eyebrow treatment — this is the
+   person's actual title, it should read immediately, not as a tag above
+   the headline. */
+.frame-hero-heading .frame-hero-eyebrow{
+  color: var(--hero-accent); margin-bottom: clamp(8px, 1.3vh, 16px);
+  font-family: var(--font-display); font-weight: 600;
+  font-size: clamp(15px, 2.3vh, 20px); letter-spacing: 0.01em; text-transform: none;
+}
 /* Height-driven, not width-driven — a 4vw-style clamp doesn't shrink at
    all on a short-but-wide viewport (1280x700 laptop-with-chrome sizes),
    which is exactly the case that was clipping the CTA buttons below the
@@ -552,6 +559,10 @@ section{
 .frame-hero-heading .frame-hero-title{
   font-size: clamp(30px, 7vh, 56px); margin-bottom: 0; line-height:1;
   color: var(--hero-fg);
+}
+.frame-hero-heading .frame-hero-hint{
+  display: block; margin-top: clamp(10px, 1.6vh, 16px);
+  color: var(--hero-fg); opacity: 0.55;
 }
 /* Starts invisible (GSAP sets opacity/y in initProfileFrame) and fades/
    slides into place as the frame grows to full-bleed, landing on the
@@ -608,13 +619,18 @@ section{
   position:absolute; z-index:2;
   /* top uses max() so it never sits closer than 110px to the true top —
      percentage alone could put the head behind the fixed nav on shorter
-     viewports. height is computed (not "bottom") so the feet land exactly
-     on frame-main's own bottom edge (85% down — its top:15% + height:70%);
+     viewports. height is computed (not "bottom") so the feet land on
+     frame-main's own bottom edge (85% down — its top:15% + height:70%),
+     plus a couple extra px so the photo overlaps that edge slightly
+     instead of just touching it — two absolutely-positioned boxes landing
+     exactly tangent (one of them clip-path'd) is a classic source of a
+     hairline seam between them at render time, even though the numbers
+     match exactly; a small deliberate overlap removes the seam outright.
      img is a replaced element, so top+bottom+auto-height would get
      silently overridden by the image's own intrinsic aspect ratio instead
      of actually reaching that edge. */
   top: max(9%, 110px); right: 6%; width: 34%;
-  height: calc(85% - max(9%, 110px));
+  height: calc(85% - max(9%, 110px) + 3px);
   object-fit: contain; object-position: bottom center;
   pointer-events:none;
   will-change: top, right, width, height;
@@ -736,69 +752,35 @@ section{
 .marquee-track span::before{ content:''; width:6px; height:6px; background: var(--teal); border-radius:50%; }
 @keyframes marquee{ from{ transform: translateX(0); } to{ transform: translateX(-50%); } }
 
-/* ============ PORTFOLIO STRIP (profile page) ============
-   A gradient anchor card flips in from the right, then the logo strip
-   unfurls left-to-right (clip-path reveal) like an accordion. The logo
-   cards autoscroll continuously behind the anchor, which stays fixed in
-   place. Scroll position is driven by GSAP (script.js), not a CSS
-   @keyframes translateX(-50%) loop — with real, variable-count content
-   and a flex `gap`, the halfway point of the doubled track is never
-   exactly 50% of its total width (gap only appears *between* cards, so
-   it doesn't split evenly across a duplicated row), which showed up as
-   a visible jump every time the loop restarted. GSAP instead measures
-   the actual pixel offset to the second copy and animates to that exact
-   value, so the restart is seamless regardless of card count/sizing. */
-.portfolio-strip{ padding: 0 0 60px; }
-.portfolio-strip-inner{
-  display:flex; align-items:stretch; height: 300px;
-  border-radius: 20px; overflow:hidden;
-  border: 1px solid var(--line);
+/* ============ BRAND LOGO GRID (profile page) ============
+   Simple, less pushy alternative to the old autoscrolling carousel — an
+   8-logo (2x4) grid of rounded-square cards spanning the page's normal
+   content width (container + side padding, same as .dm-portfolio-head
+   below it), each opening the same project overlay used by the digital
+   marketing portfolio. */
+.brand-logo-section{ padding: 20px 0 60px; }
+.brand-logo-grid{
+  display:grid; grid-template-columns:repeat(4,1fr); gap:20px;
+  max-width: var(--container); margin: 0 auto; padding: 0 40px;
 }
-.portfolio-anchor{
-  flex: 0 0 200px;
-  background: linear-gradient(135deg,#14bea2,#13273a);
+.brand-logo-card{
+  aspect-ratio: 1; border-radius:20px; padding:24px;
+  background: var(--bg-alt); border:1px solid var(--line);
   display:flex; align-items:center; justify-content:center;
-  position:relative; z-index:2;
+  cursor:pointer; transition: border-color .25s, background .25s, transform .25s;
 }
-.portfolio-anchor span{
-  writing-mode: vertical-rl; transform: rotate(180deg);
-  font-family: var(--font-display); font-weight:700; letter-spacing:0.08em;
-  font-size: 15px; color: var(--white); text-transform:uppercase;
-  white-space:nowrap;
+.brand-logo-card:hover{
+  border-color: rgba(20,240,196,0.4); background: rgba(255,255,255,0.05);
+  transform: translateY(-4px);
 }
-.portfolio-scroll-wrap{ flex:1; overflow:hidden; position:relative; }
-.portfolio-scroll-track{ display:flex; gap:20px; height:100%; width:max-content; }
-.portfolio-logo-card{
-  flex: 0 0 300px; height:100%;
-  background: var(--bg-alt); border:1px solid var(--line); border-radius:16px;
-  overflow:hidden;
-}
-.portfolio-logo-card img{ width:100%; height:100%; object-fit:cover; display:block; }
+.brand-logo-card img{ width:100%; height:100%; object-fit:contain; }
 
-/* -- filmstrip scrubber -- */
-.portfolio-filmstrip{ margin-top: 16px; }
-.portfolio-filmstrip-track{
-  display:flex; gap: 8px; overflow-x:auto; scroll-snap-type: x proximity;
-  padding-bottom: 6px; cursor: grab; -webkit-overflow-scrolling: touch;
+@media (max-width: 900px){
+  .brand-logo-grid{ grid-template-columns:repeat(2,1fr); }
 }
-.portfolio-filmstrip-track:active{ cursor: grabbing; }
-.portfolio-filmstrip-track::-webkit-scrollbar{ height: 4px; }
-.portfolio-filmstrip-track::-webkit-scrollbar-thumb{ background: var(--line); border-radius: 999px; }
-.portfolio-filmstrip-thumb{
-  flex: 0 0 52px; height: 52px; border-radius: 8px; overflow:hidden;
-  border: 1px solid var(--line); opacity:0.5; cursor:pointer;
-  transition: opacity .2s, border-color .2s;
-  scroll-snap-align: start;
-}
-.portfolio-filmstrip-thumb img{ width:100%; height:100%; object-fit:cover; display:block; pointer-events:none; }
-.portfolio-filmstrip-thumb.active{ opacity:1; border-color: var(--teal); }
-
-@media (max-width: 700px){
-  .portfolio-strip-inner{ height:200px; }
-  .portfolio-anchor{ flex-basis:110px; }
-  .portfolio-anchor span{ font-size:11px; }
-  .portfolio-logo-card{ flex-basis:200px; }
-  .portfolio-filmstrip-thumb{ flex-basis:42px; height:42px; }
+@media (max-width: 600px){
+  .brand-logo-grid{ gap:10px; padding: 0 20px; }
+  .brand-logo-card{ border-radius:14px; padding:14px; }
 }
 
 /* ============ DIGITAL MARKETING PORTFOLIO (profile page) ============
@@ -812,7 +794,8 @@ section{
    scrubs a slight scale/opacity dip on each card over that same window
    for the "settles, then eases back as the next one arrives" feel. */
 .dm-portfolio{ padding: 40px 0 60px; }
-.dm-portfolio-head{ max-width: var(--container); margin: 0 auto 32px; padding: 0 40px; }
+.dm-portfolio-head{ max-width: var(--container); margin: 0 auto 32px; padding: 0 40px; text-align: center; }
+.dm-portfolio-head .section-desc{ margin: 0 auto; }
 .dm-stack{ position: relative; padding: 0 40px; }
 .dm-card{
   position: sticky; top: 96px;

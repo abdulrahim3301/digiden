@@ -450,6 +450,9 @@ function initProfileFrame(){
 
   const echoes = stack.querySelectorAll(".frame-echo");
 
+  // Cursor parallax only ever moves the echo lines, not the photo itself —
+  // the photo stays exactly flush with frame-main's edge regardless of the
+  // cursor.
   hero.addEventListener("mousemove", (e) => {
     const r = hero.getBoundingClientRect();
     const nx = (e.clientX - r.left - r.width / 2) / (r.width / 2);
@@ -458,11 +461,9 @@ function initProfileFrame(){
       const depth = (i + 1) * 6;
       gsap.to(echo, { x: nx * depth, y: ny * depth, duration: 0.6, ease: "power2.out" });
     });
-    if (cutout) gsap.to(cutout, { x: nx * 4, y: ny * 4, duration: 0.6, ease: "power2.out" });
   });
   hero.addEventListener("mouseleave", () => {
     echoes.forEach(echo => gsap.to(echo, { x: 0, y: 0, duration: 0.6, ease: "power2.out" }));
-    if (cutout) gsap.to(cutout, { x: 0, y: 0, duration: 0.6, ease: "power2.out" });
   });
 
   if (bio) gsap.set(bio, { opacity: 0, y: 40 });
@@ -532,148 +533,42 @@ function initProfileFrame(){
 }
 
 /* ============================================================
-   PORTFOLIO STRIP DATA — Abdul Rahim's brand design portfolio.
-   Filenames match assets/team/AR-Portfolio/<name>.png exactly —
-   add or remove a logo by editing this list, no HTML changes needed.
+   BRAND LOGO GRID DATA — Abdul Rahim's brand design portfolio.
+   8 logos (renders as a 2x4 grid) — a deliberately smaller, less pushy
+   selection than the full logo list, rather than an autoscrolling
+   carousel of everything. Filenames match
+   assets/team/AR-Portfolio/BrandDesignPortfolio/<name>.png exactly.
    ============================================================ */
-const AR_PORTFOLIO_LOGOS = [
-  "AKIMEY", "ARA Visuals", "ASquad", "Allround", "Annas Herz", "BOT 2", "Baro", "Barz",
-  "Bay Brownie", "BluOrange Travels", "Bortal", "Bubble Bros", "ButseKu", "ByeNic",
-  "CMITIP", "CW", "Cactus", "Chinese", "Data2AI", "DezignersDen", "DigiDen", "Digital Hunar",
-  "DronZilla", "DronezWala", "ECommercePunjab", "EarthCureLife", "GITCP", "GreenStar",
-  "GripGlo", "Hotel Rubhenshof", "HotelSchilberg", "Hummerge", "IMC", "Innowend",
-  "MakerSpace Punjab 2", "MakerSpace Punjab", "NextNova", "NueroNet", "OEC", "PKIChain",
-  "PowerCloud", "ROC", "Recurved", "RenderHunt", "SRSCare", "SandyFin", "SizzlySeries",
-  "SolChat", "StitchbyStitch", "TheGauntlet", "Transper", "TwinCiti", "VIC Talks", "WFS",
-  "WendLendt Group", "YouthUpSkill", "Zenith"
+const AR_LOGO_GRID = [
+  "Annas Herz", "Allround", "Bubble Bros", "CMITIP",
+  "GripGlo", "Recurved", "SandyFin", "Transper"
 ];
 
 /* ============================================================
-   PORTFOLIO STRIP — gradient anchor card flips in from the right,
-   the logo strip unfurls left-to-right, then autoscrolls continuously
-   behind it. A filmstrip of thumbnails below lets a visitor scrub or
-   swipe through the same set directly. Individual team pages only;
-   no-op everywhere else.
+   BRAND LOGO GRID — simple 3x3 grid of rounded-square logo cards.
+   Each card opens the same project overlay used by the digital
+   marketing portfolio below it, sharing the same overlay instance
+   (passed in) rather than creating its own. Individual team pages
+   only; no-op everywhere else.
    ============================================================ */
-function initPortfolioStrip(){
-  const section = document.getElementById("portfolioStrip");
-  const anchor = document.getElementById("portfolioAnchor");
-  const wrap = document.getElementById("portfolioScrollWrap");
-  const track = document.getElementById("portfolioScrollTrack");
-  const filmTrack = document.getElementById("portfolioFilmstripTrack");
-  if (!section || !anchor || !wrap || !track) return;
+function initBrandLogoGrid(overlay){
+  const grid = document.getElementById("brandLogoGrid");
+  if (!grid) return;
 
-  gsap.registerPlugin(ScrollTrigger);
-
-  const logoPath = name => `assets/team/AR-Portfolio/BrandDesignPortfolio/${name}.png`;
-  const buildCard = (name, className) => {
+  grid.innerHTML = "";
+  AR_LOGO_GRID.forEach(name => {
+    const logoSrc = `assets/team/AR-Portfolio/BrandDesignPortfolio/${name}.png`;
     const card = document.createElement("div");
-    card.className = className;
-    const img = document.createElement("img");
-    img.src = logoPath(name);
-    img.alt = name;
-    img.loading = "lazy";
-    card.appendChild(img);
-    return card;
-  };
-
-  // Two identical copies back to back so the loop has something to land
-  // on; the filmstrip below only needs one copy since it's just a
-  // scrub control, not something that scrolls on its own.
-  track.innerHTML = "";
-  AR_PORTFOLIO_LOGOS.concat(AR_PORTFOLIO_LOGOS).forEach(name => {
-    track.appendChild(buildCard(name, "portfolio-logo-card"));
+    card.className = "brand-logo-card";
+    card.innerHTML = `<img src="${logoSrc}" alt="${name}" loading="lazy">`;
+    if (overlay){
+      card.addEventListener("click", () => overlay.open({
+        name, logoSrc, tag: "Brand Identity Design",
+        description: "Full brand identity and logo design.", screenshots: []
+      }));
+    }
+    grid.appendChild(card);
   });
-
-  let thumbs = [];
-  if (filmTrack){
-    filmTrack.innerHTML = "";
-    thumbs = AR_PORTFOLIO_LOGOS.map(name => {
-      const thumb = buildCard(name, "portfolio-filmstrip-thumb");
-      filmTrack.appendChild(thumb);
-      return thumb;
-    });
-  }
-
-  gsap.set(anchor, { opacity: 0, x: 80, rotateY: 60, transformPerspective: 800 });
-  gsap.set(wrap, { clipPath: "inset(0 100% 0 0)" });
-
-  gsap.timeline({
-    scrollTrigger: { trigger: section, start: "top 75%" }
-  })
-    .to(anchor, { opacity: 1, x: 0, rotateY: 0, duration: 0.6, ease: "power2.out" })
-    .to(wrap, { clipPath: "inset(0 0% 0 0)", duration: 0.9, ease: "power2.inOut" }, "-=0.2");
-
-  // Exact pixel distance to the second copy's first card. CSS's old
-  // translateX(-50%) trick assumed the two halves were exactly half the
-  // track's total width, but flex `gap` only appears *between* cards —
-  // it doesn't split evenly across a doubled row — so that was always
-  // off by a fraction of a gap and visibly jumped every time the loop
-  // restarted. Measuring the real DOM offset instead guarantees an
-  // exact match, whatever the card count or sizing.
-  function measureLoopWidth(){
-    const n = AR_PORTFOLIO_LOGOS.length;
-    const cards = track.children;
-    if (cards.length < n + 1) return 0;
-    return cards[n].offsetLeft - cards[0].offsetLeft;
-  }
-
-  let loopWidth = measureLoopWidth();
-  const SECONDS_PER_LOGO = 2.6;
-  const scrollTween = gsap.to(track, {
-    x: () => -loopWidth,
-    duration: AR_PORTFOLIO_LOGOS.length * SECONDS_PER_LOGO,
-    ease: "none",
-    repeat: -1
-  });
-
-  window.addEventListener("resize", () => {
-    const fresh = measureLoopWidth();
-    if (fresh){ loopWidth = fresh; scrollTween.invalidate(); }
-  });
-
-  function setActiveThumb(progress){
-    if (!thumbs.length) return;
-    const idx = Math.floor(progress * AR_PORTFOLIO_LOGOS.length) % AR_PORTFOLIO_LOGOS.length;
-    thumbs.forEach((t, i) => t.classList.toggle("active", i === idx));
-  }
-  scrollTween.eventCallback("onUpdate", () => setActiveThumb(scrollTween.progress()));
-
-  if (filmTrack){
-    let resumeTimer = null;
-    const pauseForUser = () => { scrollTween.pause(); clearTimeout(resumeTimer); };
-    const scheduleResume = () => {
-      clearTimeout(resumeTimer);
-      resumeTimer = setTimeout(() => scrollTween.play(), 1200);
-    };
-
-    // Native touch/trackpad scrolling on the filmstrip itself drives the
-    // main carousel directly — swipe the thumbnails, the big cards follow.
-    filmTrack.addEventListener("scroll", () => {
-      pauseForUser();
-      const maxScroll = filmTrack.scrollWidth - filmTrack.clientWidth;
-      const progress = maxScroll > 0 ? filmTrack.scrollLeft / maxScroll : 0;
-      scrollTween.progress(progress);
-      setActiveThumb(progress);
-      scheduleResume();
-    }, { passive: true });
-
-    thumbs.forEach((thumb, i) => {
-      thumb.addEventListener("click", () => {
-        pauseForUser();
-        const target = i / AR_PORTFOLIO_LOGOS.length;
-        gsap.to(scrollTween, {
-          progress: target, duration: 0.6, ease: "power2.out",
-          onUpdate: () => setActiveThumb(scrollTween.progress())
-        });
-        filmTrack.scrollTo({
-          left: thumb.offsetLeft - filmTrack.clientWidth / 2 + thumb.offsetWidth / 2,
-          behavior: "smooth"
-        });
-        scheduleResume();
-      });
-    });
-  }
 }
 
 /* ============================================================
@@ -684,7 +579,8 @@ function initPortfolioStrip(){
    ============================================================ */
 const DM_PORTFOLIO = [
   { name: "E-Rozgaar", logo: "E-Rozgaar", tag: "Punjab Government Digital Initiative",
-    description: "Digital campaign and growth work on E-Rozgaar, a Punjab Government initiative connecting job seekers with employers.", screenshots: [] },
+    description: "Digital campaign and growth work on E-Rozgaar, a Punjab Government initiative connecting job seekers with employers.",
+    screenshots: ["assets/team/AR-Portfolio/DigitalMarketingPortfolio/E-Rozgaar-Cover.png"] },
   { name: "GITCP", logo: "GITCP", tag: "Punjab Government Digital Initiative",
     description: "Digital campaign and growth work on GITCP (Global IT Certifications), a Punjab Government digital-skills initiative.", screenshots: [] },
   { name: "SheWins", logo: "SheWins", tag: "Punjab Government Digital Initiative",
@@ -720,7 +616,7 @@ function initProjectOverlay(){
         ${
           item.screenshots && item.screenshots.length
             ? item.screenshots.map(src => `<img src="${src}" alt="${item.name} — campaign result">`).join("")
-            : `<div class="project-overlay-shots-empty">Full campaign screenshots coming soon</div>`
+            : `<div class="project-overlay-shots-empty">More visuals coming soon</div>`
         }
       </div>
     `;
@@ -756,12 +652,11 @@ function initProjectOverlay(){
    project overlay on click. Individual team pages only; no-op
    elsewhere.
    ============================================================ */
-function initDMPortfolioStack(){
+function initDMPortfolioStack(overlay){
   const stack = document.getElementById("dmStack");
   if (!stack) return;
 
   gsap.registerPlugin(ScrollTrigger);
-  const overlay = initProjectOverlay();
 
   stack.innerHTML = "";
   DM_PORTFOLIO.forEach((item, i) => {
@@ -896,7 +791,11 @@ document.addEventListener("DOMContentLoaded", () => {
   requestAnimationFrame(() => requestAnimationFrame(() => {
     initBrandAssemble();
     initProfileFrame();
-    initPortfolioStrip();
-    initDMPortfolioStack();
+    // Shared overlay instance — the logo grid and the DM portfolio stack
+    // both open project details into the same panel, so it's created
+    // once here rather than each init function binding its own listeners.
+    const overlay = initProjectOverlay();
+    initBrandLogoGrid(overlay);
+    initDMPortfolioStack(overlay);
   }));
 });

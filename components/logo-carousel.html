@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Logo Carousel — reusable component</title>
+<!--
+  LOGO CAROUSEL — standalone, reusable component
+  ================================================
+  Extracted from the DigiDen site (team profile pages). A gradient
+  "anchor" card flips in from the right, then a strip of logo cards
+  unfurls open (clip-path reveal) and autoscrolls continuously behind
+  the anchor. A filmstrip of thumbnails below lets a visitor scrub or
+  swipe through the same set directly — dragging the filmstrip drives
+  the main strip, and the main strip highlights the active thumbnail
+  as it scrolls past.
+
+  HOW TO REUSE ON ANOTHER SITE
+  -----------------------------
+  1. Copy this whole file, or lift the <style> block into your
+     stylesheet and the <script> block into your JS bundle — it has no
+     dependency on anything else from the site it was pulled from.
+  2. Only external dependency: GSAP core (no plugins needed — this
+     component doesn't use ScrollTrigger, just gsap.timeline/gsap.to).
+  3. Edit the LOGO_CAROUSEL_ITEMS array near the top of the <script>
+     block: each entry is { name, logo } where `logo` is any image URL
+     (swap the placeholder data-URI generator for your own <img src>
+     paths — see the comment right above the array).
+  4. Drop the markup (the <section class="logo-carousel">...</section>
+     block in <body>) wherever you want the carousel to sit, and call
+     initLogoCarousel() after the DOM is ready.
+  5. Anchor label text ("Our Work" below) is set via the
+     data-anchor-label attribute on the section — change it inline in
+     the HTML, no JS edit needed.
+-->
+<style>
+  :root{
+    --lc-bg-alt: #0e1e2d;
+    --lc-line: rgba(255,255,255,0.1);
+    --lc-white: #ffffff;
+    --lc-teal: #14f0c4;
+    --lc-teal-dim: #14bea2;
+    --lc-navy: #13273a;
+    --lc-font-display: 'Space Grotesk', 'Arial Black', sans-serif;
+  }
+
+  /* ============ LOGO CAROUSEL ============
+     A gradient anchor card flips in from the right, then the logo strip
+     unfurls left-to-right (clip-path reveal) like an accordion. The logo
+     cards autoscroll continuously behind the anchor, which stays fixed in
+     place. Scroll position is driven by GSAP, not a CSS @keyframes
+     translateX(-50%) loop — with real, variable-count content and a flex
+     `gap`, the halfway point of the doubled track is never exactly 50% of
+     its total width (gap only appears *between* cards, so it doesn't
+     split evenly across a duplicated row), which shows up as a visible
+     jump every time the loop restarts. GSAP instead measures the actual
+     pixel offset to the second copy and animates to that exact value, so
+     the restart is seamless regardless of card count/sizing. */
+  .logo-carousel{ padding: 0 0 60px; font-family: sans-serif; }
+  .logo-carousel-inner{
+    display:flex; align-items:stretch; height: 300px;
+    border-radius: 20px; overflow:hidden;
+    border: 1px solid var(--lc-line);
+  }
+  .logo-carousel-anchor{
+    flex: 0 0 200px;
+    background: linear-gradient(135deg, var(--lc-teal-dim), var(--lc-navy));
+    display:flex; align-items:center; justify-content:center;
+    position:relative; z-index:2;
+  }
+  .logo-carousel-anchor span{
+    writing-mode: vertical-rl; transform: rotate(180deg);
+    font-family: var(--lc-font-display); font-weight:700; letter-spacing:0.08em;
+    font-size: 15px; color: var(--lc-white); text-transform:uppercase;
+    white-space:nowrap;
+  }
+  .logo-carousel-scroll-wrap{ flex:1; overflow:hidden; position:relative; }
+  .logo-carousel-scroll-track{ display:flex; gap:20px; height:100%; width:max-content; }
+  .logo-carousel-card{
+    flex: 0 0 300px; height:100%;
+    background: var(--lc-bg-alt); border:1px solid var(--lc-line); border-radius:16px;
+    overflow:hidden;
+  }
+  .logo-carousel-card img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+  /* -- filmstrip scrubber -- */
+  .logo-carousel-filmstrip{ margin-top: 16px; }
+  .logo-carousel-filmstrip-track{
+    display:flex; gap: 8px; overflow-x:auto; scroll-snap-type: x proximity;
+    padding-bottom: 6px; cursor: grab; -webkit-overflow-scrolling: touch;
+  }
+  .logo-carousel-filmstrip-track:active{ cursor: grabbing; }
+  .logo-carousel-filmstrip-track::-webkit-scrollbar{ height: 4px; }
+  .logo-carousel-filmstrip-track::-webkit-scrollbar-thumb{ background: var(--lc-line); border-radius: 999px; }
+  .logo-carousel-filmstrip-thumb{
+    flex: 0 0 52px; height: 52px; border-radius: 8px; overflow:hidden;
+    border: 1px solid var(--lc-line); opacity:0.5; cursor:pointer;
+    transition: opacity .2s, border-color .2s;
+    scroll-snap-align: start;
+  }
+  .logo-carousel-filmstrip-thumb img{ width:100%; height:100%; object-fit:cover; display:block; pointer-events:none; }
+  .logo-carousel-filmstrip-thumb.active{ opacity:1; border-color: var(--lc-teal); }
+
+  @media (max-width: 700px){
+    .logo-carousel-inner{ height:200px; }
+    .logo-carousel-anchor{ flex-basis:110px; }
+    .logo-carousel-anchor span{ font-size:11px; }
+    .logo-carousel-card{ flex-basis:200px; }
+    .logo-carousel-filmstrip-thumb{ flex-basis:42px; height:42px; }
+  }
+
+  /* demo page chrome only — safe to delete when reusing */
+  body{ margin:0; background:#13273a; color:#fff; padding: 60px 40px; }
+  .demo-note{ max-width:640px; margin:0 auto 40px; font-family:sans-serif; color:rgba(255,255,255,0.6); font-size:14px; line-height:1.6; }
+  .demo-note code{ background:rgba(255,255,255,0.08); padding:2px 6px; border-radius:4px; }
+</style>
+</head>
+<body>
+
+<p class="demo-note">
+  Standalone demo of the logo carousel component. Placeholder tiles below are generated inline (no image files needed to preview) —
+  swap <code>LOGO_CAROUSEL_ITEMS</code> in the script for your own <code>{ name, logo }</code> entries pointing at real logo images.
+</p>
+
+<section class="logo-carousel" id="logoCarousel" data-anchor-label="Our Work">
+  <div class="logo-carousel-inner">
+    <div class="logo-carousel-anchor" id="logoCarouselAnchor"><span></span></div>
+    <div class="logo-carousel-scroll-wrap" id="logoCarouselScrollWrap">
+      <div class="logo-carousel-scroll-track" id="logoCarouselScrollTrack"></div>
+    </div>
+  </div>
+  <div class="logo-carousel-filmstrip">
+    <div class="logo-carousel-filmstrip-track" id="logoCarouselFilmstripTrack"></div>
+  </div>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script>
+  // Edit this list — { name, logo } per card. `logo` can be any image URL
+  // (e.g. "assets/logos/acme.png"). The placeholder generator below just
+  // makes this file runnable with zero external assets for previewing;
+  // delete placeholderLogo() and use real paths in real use.
+  function placeholderLogo(text, hue){
+    const escaped = String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300">
+      <rect width="300" height="300" fill="hsl(${hue},45%,18%)"/>
+      <text x="50%" y="52%" font-family="sans-serif" font-size="42" font-weight="700"
+        fill="hsl(${hue},70%,70%)" text-anchor="middle" dominant-baseline="middle">${escaped}</text>
+    </svg>`;
+    return "data:image/svg+xml;base64," + btoa(svg);
+  }
+
+  const LOGO_CAROUSEL_ITEMS = [
+    { name: "Acme Co",      logo: placeholderLogo("AC", 165) },
+    { name: "Nova Studio",  logo: placeholderLogo("NS", 30) },
+    { name: "Bright Path",  logo: placeholderLogo("BP", 210) },
+    { name: "Cedar & Co",   logo: placeholderLogo("CC", 90) },
+    { name: "Orbit Labs",   logo: placeholderLogo("OL", 260) },
+    { name: "Fernweh",      logo: placeholderLogo("FW", 340) },
+    { name: "Bloom",        logo: placeholderLogo("BL", 150) },
+    { name: "Rally",        logo: placeholderLogo("RA", 15) },
+    { name: "Solace",       logo: placeholderLogo("SO", 195) },
+    { name: "Vantage",      logo: placeholderLogo("VA", 45) }
+  ];
+
+  /* ============================================================
+     LOGO CAROUSEL — gradient anchor card flips in from the right,
+     the logo strip unfurls left-to-right, then autoscrolls
+     continuously behind it. A filmstrip of thumbnails below lets a
+     visitor scrub or swipe through the same set directly.
+     ============================================================ */
+  function initLogoCarousel(items){
+    items = items || LOGO_CAROUSEL_ITEMS;
+    const section = document.getElementById("logoCarousel");
+    const anchor = document.getElementById("logoCarouselAnchor");
+    const wrap = document.getElementById("logoCarouselScrollWrap");
+    const track = document.getElementById("logoCarouselScrollTrack");
+    const filmTrack = document.getElementById("logoCarouselFilmstripTrack");
+    if (!section || !anchor || !wrap || !track) return;
+
+    const anchorLabel = anchor.querySelector("span");
+    if (anchorLabel) anchorLabel.textContent = section.dataset.anchorLabel || "Our Work";
+
+    const buildCard = (item, className) => {
+      const card = document.createElement("div");
+      card.className = className;
+      const img = document.createElement("img");
+      img.src = item.logo;
+      img.alt = item.name;
+      img.loading = "lazy";
+      card.appendChild(img);
+      return card;
+    };
+
+    // Two identical copies back to back so the loop has something to land
+    // on; the filmstrip below only needs one copy since it's just a
+    // scrub control, not something that scrolls on its own.
+    track.innerHTML = "";
+    items.concat(items).forEach(item => {
+      track.appendChild(buildCard(item, "logo-carousel-card"));
+    });
+
+    let thumbs = [];
+    if (filmTrack){
+      filmTrack.innerHTML = "";
+      thumbs = items.map(item => {
+        const thumb = buildCard(item, "logo-carousel-filmstrip-thumb");
+        filmTrack.appendChild(thumb);
+        return thumb;
+      });
+    }
+
+    gsap.set(anchor, { opacity: 0, x: 80, rotateY: 60, transformPerspective: 800 });
+    gsap.set(wrap, { clipPath: "inset(0 100% 0 0)" });
+
+    gsap.timeline({ delay: 0.15 })
+      .to(anchor, { opacity: 1, x: 0, rotateY: 0, duration: 0.6, ease: "power2.out" })
+      .to(wrap, { clipPath: "inset(0 0% 0 0)", duration: 0.9, ease: "power2.inOut" }, "-=0.2");
+
+    // Exact pixel distance to the second copy's first card. A CSS
+    // @keyframes translateX(-50%) trick assumes the two halves are exactly
+    // half the track's total width, but flex `gap` only appears *between*
+    // cards — it doesn't split evenly across a doubled row — so that's
+    // always off by a fraction of a gap and visibly jumps on loop restart.
+    // Measuring the real DOM offset instead guarantees an exact match,
+    // whatever the card count or sizing.
+    function measureLoopWidth(){
+      const n = items.length;
+      const cards = track.children;
+      if (cards.length < n + 1) return 0;
+      return cards[n].offsetLeft - cards[0].offsetLeft;
+    }
+
+    let loopWidth = measureLoopWidth();
+    const SECONDS_PER_LOGO = 2.6;
+    const scrollTween = gsap.to(track, {
+      x: () => -loopWidth,
+      duration: items.length * SECONDS_PER_LOGO,
+      ease: "none",
+      repeat: -1
+    });
+
+    window.addEventListener("resize", () => {
+      const fresh = measureLoopWidth();
+      if (fresh){ loopWidth = fresh; scrollTween.invalidate(); }
+    });
+
+    function setActiveThumb(progress){
+      if (!thumbs.length) return;
+      const idx = Math.floor(progress * items.length) % items.length;
+      thumbs.forEach((t, i) => t.classList.toggle("active", i === idx));
+    }
+    scrollTween.eventCallback("onUpdate", () => setActiveThumb(scrollTween.progress()));
+
+    if (filmTrack){
+      let resumeTimer = null;
+      const pauseForUser = () => { scrollTween.pause(); clearTimeout(resumeTimer); };
+      const scheduleResume = () => {
+        clearTimeout(resumeTimer);
+        resumeTimer = setTimeout(() => scrollTween.play(), 1200);
+      };
+
+      // Native touch/trackpad scrolling on the filmstrip itself drives the
+      // main carousel directly — swipe the thumbnails, the big cards follow.
+      filmTrack.addEventListener("scroll", () => {
+        pauseForUser();
+        const maxScroll = filmTrack.scrollWidth - filmTrack.clientWidth;
+        const progress = maxScroll > 0 ? filmTrack.scrollLeft / maxScroll : 0;
+        scrollTween.progress(progress);
+        setActiveThumb(progress);
+        scheduleResume();
+      }, { passive: true });
+
+      thumbs.forEach((thumb, i) => {
+        thumb.addEventListener("click", () => {
+          pauseForUser();
+          const target = i / items.length;
+          gsap.to(scrollTween, {
+            progress: target, duration: 0.6, ease: "power2.out",
+            onUpdate: () => setActiveThumb(scrollTween.progress())
+          });
+          filmTrack.scrollTo({
+            left: thumb.offsetLeft - filmTrack.clientWidth / 2 + thumb.offsetWidth / 2,
+            behavior: "smooth"
+          });
+          scheduleResume();
+        });
+      });
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => initLogoCarousel());
+</script>
+</body>
+</html>
