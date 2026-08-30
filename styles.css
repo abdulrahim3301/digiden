@@ -409,6 +409,24 @@ section{
 @media (max-width: 1000px){ .team-card{ flex-basis: calc(50% - 10px); } }
 @media (max-width: 600px){ .team-card{ flex-basis: 100%; } }
 
+/* ============ PORTFOLIO NOTE (landing page, right after team) ============ */
+/* Deliberately small/quiet — a one-off honesty note, not a full section. */
+.portfolio-note{ padding-top: 0; padding-bottom: 100px; }
+.portfolio-note-card{
+  max-width: 640px; margin: 0 auto; text-align: center;
+  background: rgba(255,255,255,0.03); border: 1px solid var(--line); border-radius: 20px;
+  padding: 40px;
+}
+.portfolio-note-card .section-eyebrow{ margin-bottom: 10px; }
+.portfolio-note-card .section-title{ font-size: clamp(22px, 3vw, 28px); margin-bottom: 14px; }
+.portfolio-note-card .section-desc{ max-width: 100%; margin: 0 auto; font-size: 15px; }
+.portfolio-note-link{ color: var(--teal); white-space: nowrap; }
+.portfolio-note-link:hover{ color: var(--white); }
+
+@media (max-width: 600px){
+  .portfolio-note-card{ padding: 28px; }
+}
+
 /* ============ TEAM PAGE (team.html full roster) ============ */
 .team-hero{ padding-top: 180px; padding-bottom: 60px; }
 .team-hero-banner{
@@ -701,6 +719,11 @@ section{
 
 /* ============ CLIENTS MARQUEE ============ */
 .clients{ padding: 60px 0; max-width:100%; border-top: 1px solid var(--line); border-bottom:1px solid var(--line); }
+.clients-heading{
+  text-align:center; padding: 0 32px; margin-bottom: 24px;
+  font-family: var(--font-mono); font-size: 13px; color: var(--text-faint);
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
 .marquee{ overflow:hidden; }
 .marquee-track{
   display:flex; gap: 64px; width: max-content;
