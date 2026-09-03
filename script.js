@@ -536,36 +536,40 @@ function initProfileFrame(){
    BRAND LOGO GRID DATA — Abdul Rahim's brand design portfolio.
    8 logos (renders as a 2x4 grid) — a deliberately smaller, less pushy
    selection than the full logo list, rather than an autoscrolling
-   carousel of everything. Filenames match
-   assets/team/AR-Portfolio/BrandDesignPortfolio/<name>.png exactly.
+   carousel of everything. Grid tile itself uses the real logo file,
+   assets/team/AR-Portfolio/BrandDesignPortfolio/<name>.png — `slug` is
+   only for the case-study placement images (see openCaseStudy below).
    ============================================================ */
 const AR_LOGO_GRID = [
-  "Annas Herz", "Allround", "Bubble Bros", "CMITIP",
-  "GripGlo", "Recurved", "SandyFin", "Transper"
+  { name: "Annas Herz", slug: "annas-herz" },
+  { name: "Allround", slug: "allround" },
+  { name: "Bubble Bros", slug: "bubble-bros" },
+  { name: "CMITIP", slug: "cmitip" },
+  { name: "GripGlo", slug: "gripglo" },
+  { name: "Recurved", slug: "recurved" },
+  { name: "SandyFin", slug: "sandyfin" },
+  { name: "Transper", slug: "transper" }
 ];
 
 /* ============================================================
    BRAND LOGO GRID — simple 3x3 grid of rounded-square logo cards.
-   Each card opens the same project overlay used by the digital
-   marketing portfolio below it, sharing the same overlay instance
-   (passed in) rather than creating its own. Individual team pages
-   only; no-op everywhere else.
+   Each card opens the case-study overlay (see openCaseStudy in
+   initProjectOverlay), sharing the same overlay instance as the digital
+   marketing portfolio below it rather than creating its own. Individual
+   team pages only; no-op everywhere else.
    ============================================================ */
 function initBrandLogoGrid(overlay){
   const grid = document.getElementById("brandLogoGrid");
   if (!grid) return;
 
   grid.innerHTML = "";
-  AR_LOGO_GRID.forEach(name => {
+  AR_LOGO_GRID.forEach(({ name, slug }) => {
     const logoSrc = `assets/team/AR-Portfolio/BrandDesignPortfolio/${name}.png`;
     const card = document.createElement("div");
     card.className = "brand-logo-card";
     card.innerHTML = `<img src="${logoSrc}" alt="${name}" loading="lazy">`;
     if (overlay){
-      card.addEventListener("click", () => overlay.open({
-        name, logoSrc, tag: "Brand Identity Design",
-        description: "Full brand identity and logo design.", screenshots: []
-      }));
+      card.addEventListener("click", () => overlay.openCaseStudy({ name, slug, logoSrc }));
     }
     grid.appendChild(card);
   });
@@ -604,6 +608,17 @@ function initProjectOverlay(){
   const closeBtn = document.getElementById("projectOverlayClose");
   const backdrop = document.getElementById("projectOverlayBackdrop");
 
+  function show(){
+    overlay.classList.add("open");
+    overlay.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+  }
+  function close(){
+    overlay.classList.remove("open");
+    overlay.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+  }
+
   function open(item){
     content.innerHTML = `
       <div class="project-overlay-head">
@@ -620,21 +635,45 @@ function initProjectOverlay(){
         }
       </div>
     `;
-    overlay.classList.add("open");
-    overlay.setAttribute("aria-hidden", "false");
-    document.body.style.overflow = "hidden";
+    show();
   }
-  function close(){
-    overlay.classList.remove("open");
-    overlay.setAttribute("aria-hidden", "true");
-    document.body.style.overflow = "";
+
+  // Case-study layout for the brand logo grid — wireframed after
+  // barnard.co/work's project pages: a big hero cover, a light/dark
+  // variant grid, then two supporting mockup/process placements. Each
+  // logo has 4 placement images at a fixed filename convention
+  // (case-studies/<slug>_p1..p4.png) so dropping in the real design
+  // later is just replacing that file — no code changes. These are
+  // wireframe placeholders, not real deliverables for these brands.
+  function openCaseStudy(item){
+    const base = `assets/team/AR-Portfolio/BrandDesignPortfolio/case-studies/${item.slug}`;
+    content.innerHTML = `
+      <div class="project-overlay-head">
+        <div class="project-overlay-logo"><img src="${item.logoSrc}" alt="${item.name}"></div>
+        <h2 class="project-overlay-title">${item.name}</h2>
+      </div>
+      <span class="project-overlay-tag">Brand Identity Design</span>
+      <div class="case-study">
+        <div class="case-study-hero">
+          <img src="${base}_p1.png" alt="${item.name} — cover">
+        </div>
+        <div class="case-study-variant-grid">
+          <img src="${base}_p2.png" alt="${item.name} — logo on light and dark">
+        </div>
+        <div class="case-study-mockups">
+          <img src="${base}_p3.png" alt="${item.name} — application mockup">
+          <img src="${base}_p4.png" alt="${item.name} — process and guidelines">
+        </div>
+      </div>
+    `;
+    show();
   }
 
   closeBtn.addEventListener("click", close);
   backdrop.addEventListener("click", close);
   document.addEventListener("keydown", e => { if (e.key === "Escape") close(); });
 
-  return { open, close };
+  return { open, openCaseStudy, close };
 }
 
 /* ============================================================

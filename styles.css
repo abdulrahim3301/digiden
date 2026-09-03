@@ -913,10 +913,21 @@ section{
   border: 1px dashed var(--line); border-radius: 14px; padding: 40px;
   text-align: center; color: var(--text-faint); font-family: var(--font-mono); font-size: 13px;
 }
+
+/* case-study layout (brand logo grid overlay) — wireframed after
+   barnard.co/work: a big hero cover, a light/dark variant grid, then two
+   supporting mockup placements side by side. All 4 images are wireframe
+   placeholders (case-studies/<slug>_p1..p4.png) until swapped for the
+   real design. */
+.case-study{ display: flex; flex-direction: column; gap: 20px; }
+.case-study img{ width: 100%; display: block; border-radius: 14px; border: 1px solid var(--line); }
+.case-study-hero img{ border-radius: 20px; }
+.case-study-mockups{ display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 @media (max-width: 700px){
   .project-overlay{ padding: 16px; }
   .project-overlay-panel{ width: 100%; height: 100%; padding: 56px 24px 32px; border-radius: 16px; }
   .project-overlay-head{ flex-direction: column; align-items: flex-start; gap: 14px; }
+  .case-study-mockups{ grid-template-columns: 1fr; }
 }
 
 /* ============ CTA / CONTACT ============ */
