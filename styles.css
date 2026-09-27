@@ -907,8 +907,30 @@ section{
   font-family: var(--font-mono); font-size: 12px; color: var(--text-soft);
 }
 .project-overlay-desc{ color: var(--text-soft); font-size: 16px; line-height: 1.7; max-width: 720px; margin-bottom: 32px; }
-.project-overlay-shots{ display: flex; flex-direction: column; gap: 20px; }
-.project-overlay-shots img{ width: 100%; border-radius: 14px; border: 1px solid var(--line); }
+.project-overlay-link{ display: inline-block; margin-bottom: 32px; }
+
+/* Campaign Impact / Role & Contribution — case-study blocks adapted
+   from Deeksha Dinesh Kumar's Behance portfolio format
+   (behance.net/gallery/249700287): bold headline with an accent
+   period, big-number stat pairs where a project has clean metrics,
+   square-bullet text lists otherwise, and a tiled photo grid. */
+.project-overlay-block{ margin-bottom: 36px; }
+.project-overlay-block-title{
+  font-family: var(--font-display); font-weight: 700;
+  color: var(--white); font-size: clamp(20px, 2.6vw, 28px); margin-bottom: 16px;
+}
+.project-overlay-block-title .accent-dot{ color: var(--teal); }
+
+.project-overlay-list{ list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+.project-overlay-list li{ color: var(--text-soft); font-size: 15px; line-height: 1.6; padding-left: 20px; position: relative; }
+.project-overlay-list li::before{ content: "▪"; position: absolute; left: 0; color: var(--teal); font-size: 12px; }
+
+.project-overlay-stats{ display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 24px; }
+.project-overlay-stat-num{ font-family: var(--font-display); font-size: clamp(26px, 3vw, 36px); font-weight: 700; color: var(--teal); }
+.project-overlay-stat-label{ color: var(--text-soft); font-size: 13px; margin-top: 4px; }
+
+.project-overlay-shots{ display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+.project-overlay-shots img{ width: 100%; display: block; border-radius: 14px; border: 1px solid var(--line); }
 .project-overlay-shots-empty{
   border: 1px dashed var(--line); border-radius: 14px; padding: 40px;
   text-align: center; color: var(--text-faint); font-family: var(--font-mono); font-size: 13px;

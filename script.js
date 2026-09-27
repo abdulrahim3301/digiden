@@ -580,17 +580,118 @@ function initBrandLogoGrid(overlay){
    from the logo marks in AR-Portfolio/DigitalMarketingPortfolio.
    Real card art comes later; swap `tag` copy per project once
    that's written, no structural changes needed.
+
+   Structure per item (inspired by barnard.co/work + Deeksha Dinesh
+   Kumar's Behance case-study format — impact numbers, then role,
+   then creative grid):
+     name, logo (maps to DigitalMarketingPortfolio/<logo>.png),
+     tag, description, link (optional external site), impact[],
+     role[], screenshots[], owner (optional — omit to show on every
+     team page with a #dmStack; set to a page's data-owner value on
+     #dmPortfolio to scope a project to just that page).
+
+     `impact` renders one of two ways depending on its item shape:
+     an array of { value, label } objects renders as big-number stat
+     blocks (use this whenever there are clean, quotable metrics);
+     an array of plain strings renders as a square-bullet list (use
+     this for placeholder copy, like "Campaign results — coming
+     soon", where there's nothing numeric to show yet).
+
+   The four Punjab Government projects are shared (Abdul Rahim and
+   Ali Hamza both worked on them) so they carry no `owner` and show
+   on both pages. Impact/role for those four are real figures pulled
+   from Abdul's CV. The six Atari Technologies clients below are
+   scoped to Abdul's page (owner: "abdul-rahim") and use placeholder
+   impact/role copy — swap those two arrays and drop in a real logo
+   at the same filename once results are finalized, no code changes
+   needed.
    ============================================================ */
 const DM_PORTFOLIO = [
   { name: "E-Rozgaar", logo: "E-Rozgaar", tag: "Punjab Government Digital Initiative",
     description: "Digital campaign and growth work on E-Rozgaar, a Punjab Government initiative connecting job seekers with employers.",
+    impact: [
+      { value: "80,000+", label: "Graduates" },
+      { value: "PKR 8.12B+", label: "Economic output" },
+      { value: "2x", label: "Impressions increase" },
+      { value: "50%", label: "Ad spend reduction" }
+    ],
+    role: [
+      "Curated social media content, print media and multi-city awareness campaigns",
+      "Helped make e-Rozgaar Pakistan's most impactful freelancing initiative"
+    ],
     screenshots: ["assets/team/AR-Portfolio/DigitalMarketingPortfolio/E-Rozgaar-Cover.png"] },
   { name: "GITCP", logo: "GITCP", tag: "Punjab Government Digital Initiative",
-    description: "Digital campaign and growth work on GITCP (Global IT Certifications), a Punjab Government digital-skills initiative.", screenshots: [] },
+    description: "Digital campaign and growth work on GITCP (Global IT Certifications), a Punjab Government digital-skills initiative.",
+    impact: [
+      { value: "$0.12", label: "CPC across Meta & LinkedIn" },
+      { value: "1.02%", label: "CTR on LinkedIn ads" },
+      { value: "49%", label: "Audience penetration" }
+    ],
+    role: [
+      "Developed the brand identity for Global IT Certifications",
+      "Managed full-funnel ad campaigns across Meta & LinkedIn to drive engagement and conversions"
+    ],
+    screenshots: [] },
   { name: "SheWins", logo: "SheWins", tag: "Punjab Government Digital Initiative",
-    description: "Digital campaign and growth work on SheWins, a Punjab Government initiative supporting women's participation in the digital economy.", screenshots: [] },
+    description: "Digital campaign and growth work on SheWins, a Punjab Government initiative supporting women's participation in the digital economy.",
+    impact: [
+      { value: "15,000+", label: "Leads generated" },
+      { value: "13%", label: "Conversion rate" },
+      { value: "1,200+", label: "Women graduated" },
+      { value: "3,000+", label: "Instagram followers (from 40)" }
+    ],
+    role: [
+      "Revamped brand identity and designed business pitch decks",
+      "Built a multi-channel marketing strategy on Meta & TikTok Ads with GA4 & GTM",
+      "Hosted multi-platform webinars and awareness sessions across 15+ colleges and universities"
+    ],
+    screenshots: [] },
   { name: "THSS", logo: "THSS", tag: "Punjab Government Digital Initiative",
-    description: "Digital campaign and growth work on THSS, a Punjab Government digital initiative.", screenshots: [] }
+    description: "Digital campaign and growth work on THSS, a Punjab Government digital initiative.",
+    impact: ["Campaign metrics — coming soon"],
+    role: ["Digital campaign and growth work on THSS, a Punjab Government digital initiative."],
+    screenshots: [] },
+
+  // — Atari Technologies clients (Abdul Rahim's page only) —
+  // Dummy impact/role copy per Abdul's request; replace with real
+  // figures once available, and swap the logo file (same filename)
+  // once a real logo is ready.
+  { name: "Air Ninja", logo: "Air Ninja", tag: "Indoor Inflatable & Ninja Park",
+    description: "Digital growth and paid media work for Air Ninja, a UK indoor inflatable and ninja park brand.",
+    link: "https://air-ninja.co.uk",
+    impact: ["Campaign results — coming soon"],
+    role: ["Full-funnel Meta & Google Ads management, local-audience targeting and creative production to drive footfall and bookings."],
+    owner: "abdul-rahim", screenshots: [] },
+  { name: "Monster Mayhem", logo: "Monster Mayhem", tag: "Indoor Soft Play & Inflatable",
+    description: "Digital growth and paid media work for Monster Mayhem, a UK indoor soft play and inflatable brand.",
+    link: "https://monster-mayhem.co.uk",
+    impact: ["Campaign results — coming soon"],
+    role: ["Full-funnel Meta & Google Ads management, local-audience targeting and creative production to drive footfall and bookings."],
+    owner: "abdul-rahim", screenshots: [] },
+  { name: "Air Nation", logo: "Air Nation", tag: "Indoor Inflatable Park",
+    description: "Digital growth and paid media work for Air Nation, a UK indoor inflatable park brand.",
+    link: "https://airnation-sh.co.uk",
+    impact: ["Campaign results — coming soon"],
+    role: ["Full-funnel Meta & Google Ads management, local-audience targeting and creative production to drive footfall and bookings."],
+    owner: "abdul-rahim", screenshots: [] },
+  { name: "Metro College", logo: "Metro College", tag: "Specialised Professional Courses",
+    description: "Digital growth and lead-generation work for Metro College, a UK provider of specialised professional courses.",
+    link: "https://metrocollege.org.uk",
+    impact: ["Campaign results — coming soon"],
+    role: ["Lead-generation campaigns across Meta & Google, landing-page optimization and enrolment funnel management for course sign-ups."],
+    owner: "abdul-rahim", screenshots: [] },
+  { name: "SRS Care", logo: "SRS Care", tag: "Home Care Services",
+    description: "Digital growth and local-visibility work for SRS Care, a UK home care services provider.",
+    link: "https://srs-care.co.uk",
+    impact: ["Campaign results — coming soon"],
+    role: ["Local-search visibility, Google Business Profile management and lead-generation campaigns to connect families with care services."],
+    owner: "abdul-rahim", screenshots: [] },
+  { name: "Aregon Care", logo: "Aregon Care", tag: "Home Care Services",
+    description: "Digital growth and local-visibility work for Aregon Care, a UK home care services provider.",
+    link: "https://aregoncare.co.uk",
+    impact: ["Campaign results — coming soon"],
+    role: ["Local-search visibility, Google Business Profile management and lead-generation campaigns to connect families with care services."],
+    owner: "abdul-rahim", screenshots: [] }
 ];
 
 /* ============================================================
@@ -627,6 +728,25 @@ function initProjectOverlay(){
       </div>
       <span class="project-overlay-tag">${item.tag}</span>
       <p class="project-overlay-desc">${item.description || ""}</p>
+      ${item.link ? `<a href="${item.link}" class="btn btn-ghost project-overlay-link" target="_blank" rel="noopener noreferrer">Visit site ↗</a>` : ""}
+      ${item.impact && item.impact.length ? `
+        <div class="project-overlay-block">
+          <h3 class="project-overlay-block-title">Campaign Impact<span class="accent-dot">.</span></h3>
+          ${
+            typeof item.impact[0] === "object"
+              ? `<div class="project-overlay-stats">${item.impact.map(s => `
+                  <div class="project-overlay-stat">
+                    <div class="project-overlay-stat-num">${s.value}</div>
+                    <div class="project-overlay-stat-label">${s.label}</div>
+                  </div>`).join("")}</div>`
+              : `<ul class="project-overlay-list">${item.impact.map(x => `<li>${x}</li>`).join("")}</ul>`
+          }
+        </div>` : ""}
+      ${item.role && item.role.length ? `
+        <div class="project-overlay-block">
+          <h3 class="project-overlay-block-title">Role &amp; Contribution<span class="accent-dot">.</span></h3>
+          <ul class="project-overlay-list">${item.role.map(x => `<li>${x}</li>`).join("")}</ul>
+        </div>` : ""}
       <div class="project-overlay-shots">
         ${
           item.screenshots && item.screenshots.length
@@ -697,8 +817,14 @@ function initDMPortfolioStack(overlay){
 
   gsap.registerPlugin(ScrollTrigger);
 
+  // Projects without an `owner` are shared across every team page with
+  // a #dmStack; an `owner` scopes a project to the page whose
+  // #dmPortfolio section carries the matching data-owner attribute.
+  const pageOwner = document.getElementById("dmPortfolio")?.dataset.owner;
+  const items = DM_PORTFOLIO.filter(item => !item.owner || item.owner === pageOwner);
+
   stack.innerHTML = "";
-  DM_PORTFOLIO.forEach((item, i) => {
+  items.forEach((item, i) => {
     const logoSrc = `assets/team/AR-Portfolio/DigitalMarketingPortfolio/${item.logo}.png`;
     const card = document.createElement("article");
     card.className = "dm-card";
